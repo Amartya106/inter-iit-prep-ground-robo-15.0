@@ -1,0 +1,45 @@
+# Phase 4 -- Task 1 v7/"align". Three changes together, per user instruction,
+# on top of E40/E41's drop-penalty + jitter-penalty (both permanent,
+# unconditional rewards.py terms now, no config toggle needed):
+#
+# 1. Dense settling-progress bonus (_SETTLE_BONUS_PER_STEP=0.15, permanent
+#    peg_in_hole term, no config toggle) -- rewards PARTIAL progress toward
+#    sustaining the align_only hold (self._hold), not just the all-or-
+#    nothing terminal _SUCCESS_BONUS. Targets E41's diagnostic: the policy
+#    reaches the required precision momentarily (best case 0.16-0.18cm) but
+#    doesn't settle there (mean ~6cm, only 8% under the 1cm tolerance).
+# 2. xy_err_weight_anneal_frac shortened 0.7 -> 0.35 -- converges to the
+#    softened (1.0) pull-toward-the-hole gradient sooner, giving more of
+#    the budget to refine behavior under the final weight.
+# 3. _GRASP_SHAPE_W (0.08->0.16) and _IN_RANGE_BONUS (0.05->0.10) doubled
+#    (permanent rewards.py constants, no config toggle) -- targets E41's
+#    other dominant failure mode: 35% of episodes never close the gripper
+#    at all despite averaging 152 approach attempts each.
+#
+# Fresh warm-start from E24 (not continuing v5/v6 -- new incentive
+# landscape needs a clean base, same principle used throughout this
+# project for every genuinely-new reward change).
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  align_only: true
+xy_err_weight_curriculum: true
+xy_err_weight_start: 1.5
+xy_err_weight_end: 1.0
+xy_err_weight_anneal_frac: 0.35
+total_timesteps: 2000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

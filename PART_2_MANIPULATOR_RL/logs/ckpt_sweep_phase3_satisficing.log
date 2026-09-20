@@ -1,0 +1,115 @@
+=== ckpt_250000 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.005 collision=0.580 steps=193 path_eff=0.27 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_250000.csv
+=== ckpt_500000 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.055 collision=0.580 steps=175 path_eff=0.29 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_500000.csv
+=== ckpt_750000 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.105 collision=0.500 steps=198 path_eff=0.25 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_750000.csv
+=== ckpt_1000000 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.215 collision=0.470 steps=184 path_eff=0.22 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_1000000.csv
+=== ckpt_1250000 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.315 collision=0.480 steps=153 path_eff=0.23 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_1250000.csv
+=== ckpt_1374992 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.320 collision=0.460 steps=151 path_eff=0.22 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_1374992.csv
+=== ckpt_1499984 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.325 collision=0.430 steps=150 path_eff=0.23 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_1499984.csv
+=== ckpt_1624976 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.350 collision=0.450 steps=147 path_eff=0.24 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_1624976.csv
+=== ckpt_1749968 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.395 collision=0.340 steps=151 path_eff=0.24 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_1749968.csv
+=== ckpt_1874960 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.440 collision=0.325 steps=149 path_eff=0.22 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_1874960.csv
+=== ckpt_1999952 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.435 collision=0.315 steps=156 path_eff=0.22 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_1999952.csv
+=== ckpt_2124944 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.445 collision=0.295 steps=152 path_eff=0.22 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_2124944.csv
+=== ckpt_2249936 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.470 collision=0.285 steps=149 path_eff=0.20 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_2249936.csv
+=== ckpt_2374928 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.520 collision=0.265 steps=146 path_eff=0.19 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_2374928.csv
+=== ckpt_2499920 ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.500 collision=0.290 steps=140 path_eff=0.20 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_2499920.csv
+=== ckpt_best_orig ===
+pybullet build time: Nov 28 2023 23:45:17
+Traceback (most recent call last):
+  File "/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py", line 238, in <module>
+    main()
+  File "/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py", line 212, in main
+    venv, base = build_eval_env(args.phase, cond, sigma, args.frame_stack, norm_path,
+  File "/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py", line 86, in build_eval_env
+    venv = VecNormalize.load(norm_path, venv)
+  File "/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/.venv_gpu_test/lib/python3.10/site-packages/stable_baselines3/common/vec_env/vec_normalize.py", line 317, in load
+    with open(load_path, "rb") as file_handler:
+FileNotFoundError: [Errno 2] No such file or directory: '/home/amartya/.claude/jobs/f235a9eb/tmp/ckpt_sweep_p3sat/ckpt_best_orig/vecnormalize.pkl'
+=== ckpt_best_orig ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.350 collision=0.445 steps=151 path_eff=0.23 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_best_orig.csv
+=== ckpt_best_resume ===
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.395 collision=0.395 steps=144 path_eff=0.23 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_satisficing/ckpt_best_resume.csv
+ALL_DONE

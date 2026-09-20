@@ -1,0 +1,23 @@
+{
+  "deterministic": {
+    "success": 0.015,
+    "align_ok": 0.135,
+    "enter_ok": 0.045,
+    "depth_ok": 0.045,
+    "sat_frac": 0.0
+  },
+  "stochastic_inherited": {
+    "success": 0.015,
+    "align_ok": 0.105,
+    "enter_ok": 0.045,
+    "depth_ok": 0.045,
+    "sat_frac": 0.0
+  },
+  "stochastic_clamped": {
+    "success": 0.015,
+    "align_ok": 0.12,
+    "enter_ok": 0.05,
+    "depth_ok": 0.045,
+    "sat_frac": 0.0
+  }
+}

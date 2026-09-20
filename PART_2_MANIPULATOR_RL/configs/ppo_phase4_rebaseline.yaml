@@ -1,0 +1,29 @@
+# Phase 4 - Peg-in-Hole. Plain baseline re-run, warm-started from the new
+# Phase 3 best (E24, 0.765/0.195 -- vs. E10's original warm-start from E9,
+# 0.515) to isolate how much a genuinely strong Phase 3 base skill alone
+# helps, before stacking any Phase-4-specific fixes. Deliberately does NOT
+# enable align_curriculum (E16/E17's Track-A addition, a null result on its
+# own both times) -- same hyperparams/architecture as ppo_phase4.yaml
+# otherwise. Note: _DEPTH_PROGRESS_BONUS (rewards.py) is a permanent,
+# unconditional reward-function addition for any peg_in_hole task (not a
+# config toggle, same category as Phase 3's grasp-miss-penalty) so it can't
+# be cleanly excluded the way align_curriculum can -- it's part of the
+# current reward function baseline going forward, not stacked on top here.
+phase: 4
+algo: ppo
+n_envs: 16
+frame_stack: 3
+total_timesteps: 4000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

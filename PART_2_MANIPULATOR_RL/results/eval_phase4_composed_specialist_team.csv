@@ -1,0 +1,2 @@
+n,stage1_aligned,success_rate,collision_rate,mean_steps,insert_depth_mean,insert_tilt_deg_mean,grasp_failure_rate
+200,0.015,0.0,0.39,284.53,0.0,0.001179082912672334,0.01190232558139535

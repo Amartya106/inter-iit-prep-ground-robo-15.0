@@ -1,0 +1,20 @@
+pybullet build time: Nov 28 2023 23:45:17
+=== runs/phase3_ppo_v10_e24_5M ===
+N=150  success=0.71
+failures: 43
+  of failures: collided                     0.79
+  of failures: never grasped                 0.56
+  of failures: grasped, never reached target 0.40
+  of failures: reached target, never released0.00
+  of failures: collided AND never grasped    0.49
+  of failures: collided AFTER grasping       0.30
+mean steps: all=64.7  success=46.0  fail=111.2
+grasp formed: 126/150 (0.84), mean t_first_grasp=21.8
+mean obstacle clearance kept -- empty-handed: 12.7cm (n=150)   carrying: 14.1cm (n=126)
+
+collision-steps total: 34
+which part of the arm/peg was in contact (a step can count toward >1 if multi-contact):
+  link7                     20  (58.8% of collision-steps)
+  link6                      7  (20.6% of collision-steps)
+  peg(held object)           5  (14.7% of collision-steps)
+  link5                      3  (8.8% of collision-steps)

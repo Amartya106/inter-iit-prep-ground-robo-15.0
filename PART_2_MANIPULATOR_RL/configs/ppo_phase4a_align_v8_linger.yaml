@@ -1,0 +1,43 @@
+# Phase 4 -- Task 1 v8c "linger-penalty". Alternative to v7's failed
+# approach-bonus doubling for fixing grasp-shyness: instead of rewarding
+# proximity more (which E42 showed can be gamed by hovering indefinitely
+# for free reward), penalize TIME SPENT within grasp range without
+# attempting a grasp (`linger_pen_w` in manipularl/rewards.py, new,
+# disabled by default -- 0.0 -- unless set here). Grows linearly with
+# consecutive in-range-not-grasped steps (capped at _LINGER_STEPS_CAP=20),
+# resets the instant it grasps or leaves range -- creates pressure to ACT
+# rather than pressure to approach, closing the "hover forever for free
+# reward" loophole directly rather than making the loophole itself more
+# lucrative.
+#
+# Also includes the settling bonus (permanent, unconditional -- automatic)
+# and E41's original xy_err_weight_anneal_frac=0.7 + reverted grasp bonuses
+# (0.08/0.05, matching the other two v8 variants) -- same base, varying
+# ONLY the grasp-shyness mechanism.
+#
+# Fresh warm-start from E24.
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  align_only: true
+xy_err_weight_curriculum: true
+xy_err_weight_start: 1.5
+xy_err_weight_end: 1.0
+xy_err_weight_anneal_frac: 0.7
+linger_pen_w: 0.05
+total_timesteps: 2000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

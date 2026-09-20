@@ -1,0 +1,89 @@
+=== ckpt_500000 ===
+pybullet build time: Nov 28 2023 23:45:17
+b3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+No inertial data for link, using mass=1, localinertiadiagonal = 1,1,1, identity local inertial frameb3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+ee_link/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate_ur5.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.275 collision=0.480 steps=134 path_eff=0.41 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_ur5_geomfix/ckpt_500000.csv
+=== ckpt_1000000 ===
+pybullet build time: Nov 28 2023 23:45:17
+b3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+No inertial data for link, using mass=1, localinertiadiagonal = 1,1,1, identity local inertial frameb3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+ee_link/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate_ur5.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.485 collision=0.415 steps=84 path_eff=0.33 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_ur5_geomfix/ckpt_1000000.csv
+=== ckpt_1500000 ===
+pybullet build time: Nov 28 2023 23:45:17
+b3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+No inertial data for link, using mass=1, localinertiadiagonal = 1,1,1, identity local inertial frameb3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+ee_link/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate_ur5.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.505 collision=0.360 steps=92 path_eff=0.39 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_ur5_geomfix/ckpt_1500000.csv
+=== ckpt_2000000 ===
+pybullet build time: Nov 28 2023 23:45:17
+b3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+No inertial data for link, using mass=1, localinertiadiagonal = 1,1,1, identity local inertial frameb3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+ee_link/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate_ur5.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.590 collision=0.340 steps=66 path_eff=0.34 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_ur5_geomfix/ckpt_2000000.csv
+=== ckpt_2500000 ===
+pybullet build time: Nov 28 2023 23:45:17
+b3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+No inertial data for link, using mass=1, localinertiadiagonal = 1,1,1, identity local inertial frameb3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+ee_link/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate_ur5.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.640 collision=0.330 steps=53 path_eff=0.36 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_ur5_geomfix/ckpt_2500000.csv
+=== ckpt_3000000 ===
+pybullet build time: Nov 28 2023 23:45:17
+b3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+No inertial data for link, using mass=1, localinertiadiagonal = 1,1,1, identity local inertial frameb3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+ee_link/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate_ur5.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.610 collision=0.350 steps=58 path_eff=0.39 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_ur5_geomfix/ckpt_3000000.csv
+=== ckpt_3500000 ===
+pybullet build time: Nov 28 2023 23:45:17
+b3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+No inertial data for link, using mass=1, localinertiadiagonal = 1,1,1, identity local inertial frameb3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+ee_link/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate_ur5.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.605 collision=0.320 steps=64 path_eff=0.41 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_ur5_geomfix/ckpt_3500000.csv
+=== ckpt_4000000 ===
+pybullet build time: Nov 28 2023 23:45:17
+b3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+No inertial data for link, using mass=1, localinertiadiagonal = 1,1,1, identity local inertial frameb3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+ee_link/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate_ur5.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.645 collision=0.295 steps=60 path_eff=0.37 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_ur5_geomfix/ckpt_4000000.csv
+=== ckpt_4500000 ===
+pybullet build time: Nov 28 2023 23:45:17
+b3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+No inertial data for link, using mass=1, localinertiadiagonal = 1,1,1, identity local inertial frameb3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+ee_link/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate_ur5.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.615 collision=0.315 steps=67 path_eff=0.36 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_ur5_geomfix/ckpt_4500000.csv
+=== ckpt_5000000 ===
+pybullet build time: Nov 28 2023 23:45:17
+b3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+No inertial data for link, using mass=1, localinertiadiagonal = 1,1,1, identity local inertial frameb3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+ee_link/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate_ur5.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.620 collision=0.310 steps=66 path_eff=0.36 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_ur5_geomfix/ckpt_5000000.csv
+=== ckpt_best ===
+pybullet build time: Nov 28 2023 23:45:17
+b3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+No inertial data for link, using mass=1, localinertiadiagonal = 1,1,1, identity local inertial frameb3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+ee_link/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate_ur5.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.595 collision=0.345 steps=63 path_eff=0.39 depth=0.000 tilt=nan
+[eval] wrote results/ckpt_sweep_phase3_ur5_geomfix/ckpt_best.csv
+ALL_DONE

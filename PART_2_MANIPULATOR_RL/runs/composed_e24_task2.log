@@ -1,0 +1,14 @@
+>>> 22:18:05 composed eval: raw E24 (stage1) -> regrasp -> Task2 E33 (stage2)
+pybullet build time: Nov 28 2023 23:45:17
+  50/200 episodes done
+
+N=200
+stage1_aligned (handed off to Task 2): 0.140
+overall success: 0.000
+collision_rate: 0.695
+mean_steps: 130.2
+insert_depth_mean: 0.00000
+insert_tilt_deg_mean: 0.00
+grasp_failure_rate (stage 2 only): 0.115
+[eval] wrote results/eval_phase4_composed_e24.csv
+>>> 22:22:04 composed eval DONE

@@ -1,0 +1,23 @@
+pybullet build time: Nov 28 2023 23:45:17
+N=150
+success: 0.013
+ever_grasped: 0.69
+collided (any point in episode): 0.72
+collided BEFORE ever grasping: 0.26
+mean steps: 182.5
+
+of grasped episodes (104/150):
+  min_xy_err_to_hole: mean=4.9cm  median=2.6cm  best=0.24cm
+  frac with xy_err < 3.5cm: 0.58
+  frac with xy_err < 10cm: 0.90
+  max_depth: mean=0.00cm  best=0.00cm
+  collided (of grasped eps): 0.66
+
+collision-steps total: 108
+which part of the arm/peg was in contact (a step can count toward >1 if multi-contact):
+  link7                     38  (35.2% of collision-steps)
+  link6                     35  (32.4% of collision-steps)
+  peg(held object)          20  (18.5% of collision-steps)
+  link5                     14  (13.0% of collision-steps)
+  link3                      6  (5.6% of collision-steps)
+  link4                      4  (3.7% of collision-steps)

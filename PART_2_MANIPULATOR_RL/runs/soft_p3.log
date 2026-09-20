@@ -1,0 +1,3 @@
+>>> 22:07:21 TRAIN phase3 SOFT warm-start (value reinit + log_std -0.7 + opt reset)
+>>> 23:40:27 train rc=0  OK
+>>> 23:44:48 SOFT phase3 eval: 3,in_dist,200,0.475,0.255,198.455,0.1364534856316691,0.13466820435432644,0.6463691604026393,0.0,nan

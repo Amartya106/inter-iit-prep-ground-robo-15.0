@@ -1,0 +1,30 @@
+# Phase 2 -- Pick and Place, UR5. CONTINUATION of the successful "longer"
+# checkpoint (runs/phase2_ppo_ur5_longer, formal eval 0.850 -- the checkpoint
+# that finally converged after ppo_phase2_ur5.yaml's original 3M-step attempt
+# scored only 0.005). Warm-started from that checkpoint (not from scratch),
+# more steps on top, testing whether the still-climbing trend at the end of
+# that run (0.71->0.78->0.8->0.85->0.87, no clear plateau) continues further
+# toward KUKA's own 0.995 -- or whether 0.85 was already close to this
+# checkpoint's ceiling. grasp_curriculum explicitly 0 (no re-anneal) --
+# the source checkpoint already trained under full cold-start by the end of
+# its own run, so re-enabling curriculum assist here would be a regression,
+# not a continuation.
+phase: 2
+algo: ppo
+n_envs: 16
+frame_stack: 3
+grasp_curriculum: 0.0
+total_timesteps: 3000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.008
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

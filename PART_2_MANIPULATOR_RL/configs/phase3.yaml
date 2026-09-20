@@ -1,0 +1,23 @@
+# Phase 3 - Obstacle-Aware.  TQC, lean CPU config.
+# net [128,128] + 15 quantiles + UTD 0.125: this box's small-net torch
+# throughput is the bottleneck (~13 ms/grad-step), so keep gradient work low.
+phase: 3
+algo: tqc
+n_envs: 8
+frame_stack: 3
+grasp_curriculum: 0.35
+total_timesteps: 700000
+hyperparams:
+  learning_rate: 0.0003
+  buffer_size: 500000
+  batch_size: 256
+  tau: 0.005
+  gamma: 0.99
+  learning_starts: 10000
+  train_freq: 1
+  gradient_steps: 2
+  ent_coef: auto
+  policy_kwargs:
+    net_arch: [128, 128]
+    n_critics: 2
+    n_quantiles: 15

@@ -1,0 +1,2 @@
+phase,condition,n,success_rate,collision_rate,mean_steps,path_efficiency,final_pos_error,grasp_failure_rate,insert_depth_mean,insert_tilt_deg_mean
+4,in_dist,200,0.015,0.005,393.33,0.04794958998749818,0.36735577859211355,1.0,0.0009004916723980748,0.10852311712081858

@@ -1,0 +1,451 @@
+pybullet build time: Nov 28 2023 23:45:17
+[train] phase=4 algo=ppo n_envs=8 steps=2,500,000 frame_stack=3 -> runs/phase4_full_dream_v3
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+[train] warm-starting from runs/phase3_ppo_best/model.zip
+[train] Dyna-style dream augmentation: model=runs/dynamics_model_full4.pt horizon=8 dream_env_frac=100% n_branches=100
+Logging to runs/phase4_full_dream_v3/tb/PPO_1
+----------------------------------------
+| manipularl/               |          |
+|    collision_rate         | 0.455    |
+|    dream_calls_cumulative | 800      |
+|    dream_steps_cumulative | 6312     |
+|    grasp_failure_rate     | 0.866    |
+|    insert_depth_mean      | 0        |
+|    insert_tilt_deg_mean   | 0.000799 |
+|    success_rate           | 0        |
+| rollout/                  |          |
+|    ep_len_mean            | 258      |
+|    ep_rew_mean            | -18.2    |
+| time/                     |          |
+|    fps                    | 346      |
+|    iterations             | 1        |
+|    time_elapsed           | 11       |
+|    total_timesteps        | 4096     |
+----------------------------------------
+-----------------------------------------
+| manipularl/               |           |
+|    collision_rate         | 0.464     |
+|    dream_calls_cumulative | 1600      |
+|    dream_steps_cumulative | 12706     |
+|    grasp_failure_rate     | 0.9       |
+|    insert_depth_mean      | 0         |
+|    insert_tilt_deg_mean   | 0.005     |
+|    success_rate           | 0         |
+| rollout/                  |           |
+|    ep_len_mean            | 252       |
+|    ep_rew_mean            | -16.5     |
+| time/                     |           |
+|    fps                    | 373       |
+|    iterations             | 2         |
+|    time_elapsed           | 21        |
+|    total_timesteps        | 8192      |
+| train/                    |           |
+|    approx_kl              | 0.0932276 |
+|    clip_fraction          | 0.371     |
+|    clip_range             | 0.2       |
+|    entropy_loss           | -17.3     |
+|    explained_variance     | 0.405     |
+|    learning_rate          | 0.0003    |
+|    loss                   | 4.54      |
+|    n_updates              | 13350     |
+|    policy_gradient_loss   | -0.00469  |
+|    std                    | 3.29      |
+|    value_loss             | 27.7      |
+-----------------------------------------
+------------------------------------------
+| manipularl/               |            |
+|    collision_rate         | 0.488      |
+|    dream_calls_cumulative | 2400       |
+|    dream_steps_cumulative | 19096      |
+|    grasp_failure_rate     | 0.908      |
+|    insert_depth_mean      | 0          |
+|    insert_tilt_deg_mean   | 0.00635    |
+|    success_rate           | 0          |
+| rollout/                  |            |
+|    ep_len_mean            | 260        |
+|    ep_rew_mean            | -17.4      |
+| time/                     |            |
+|    fps                    | 390        |
+|    iterations             | 3          |
+|    time_elapsed           | 31         |
+|    total_timesteps        | 12288      |
+| train/                    |            |
+|    approx_kl              | 0.54214233 |
+|    clip_fraction          | 0.621      |
+|    clip_range             | 0.2        |
+|    entropy_loss           | -17.4      |
+|    explained_variance     | 0.255      |
+|    learning_rate          | 0.0003     |
+|    loss                   | 1.97       |
+|    n_updates              | 13360      |
+|    policy_gradient_loss   | 0.0723     |
+|    std                    | 3.29       |
+|    value_loss             | 10.6       |
+------------------------------------------
+------------------------------------------
+| manipularl/               |            |
+|    collision_rate         | 0.491      |
+|    dream_calls_cumulative | 3200       |
+|    dream_steps_cumulative | 25469      |
+|    grasp_failure_rate     | 0.902      |
+|    insert_depth_mean      | 0          |
+|    insert_tilt_deg_mean   | 0.00925    |
+|    success_rate           | 0          |
+| rollout/                  |            |
+|    ep_len_mean            | 262        |
+|    ep_rew_mean            | -19.3      |
+| time/                     |            |
+|    fps                    | 398        |
+|    iterations             | 4          |
+|    time_elapsed           | 41         |
+|    total_timesteps        | 16384      |
+| train/                    |            |
+|    approx_kl              | 0.16362238 |
+|    clip_fraction          | 0.537      |
+|    clip_range             | 0.2        |
+|    entropy_loss           | -17.4      |
+|    explained_variance     | 0.216      |
+|    learning_rate          | 0.0003     |
+|    loss                   | 2.44       |
+|    n_updates              | 13370      |
+|    policy_gradient_loss   | 0.0293     |
+|    std                    | 3.3        |
+|    value_loss             | 21.2       |
+------------------------------------------
+------------------------------------------
+| manipularl/               |            |
+|    collision_rate         | 0.486      |
+|    dream_calls_cumulative | 4000       |
+|    dream_steps_cumulative | 31867      |
+|    grasp_failure_rate     | 0.896      |
+|    insert_depth_mean      | 0          |
+|    insert_tilt_deg_mean   | 0.00903    |
+|    success_rate           | 0          |
+| rollout/                  |            |
+|    ep_len_mean            | 264        |
+|    ep_rew_mean            | -19.5      |
+| time/                     |            |
+|    fps                    | 392        |
+|    iterations             | 5          |
+|    time_elapsed           | 52         |
+|    total_timesteps        | 20480      |
+| train/                    |            |
+|    approx_kl              | 0.06375213 |
+|    clip_fraction          | 0.237      |
+|    clip_range             | 0.2        |
+|    entropy_loss           | -17.4      |
+|    explained_variance     | 0.149      |
+|    learning_rate          | 0.0003     |
+|    loss                   | 2.96       |
+|    n_updates              | 13380      |
+|    policy_gradient_loss   | -0.0111    |
+|    std                    | 3.3        |
+|    value_loss             | 28.1       |
+------------------------------------------
+-------------------------------------------
+| manipularl/               |             |
+|    collision_rate         | 0.453       |
+|    dream_calls_cumulative | 4800        |
+|    dream_steps_cumulative | 38237       |
+|    grasp_failure_rate     | 0.904       |
+|    insert_depth_mean      | 0           |
+|    insert_tilt_deg_mean   | 0.00808     |
+|    success_rate           | 0           |
+| rollout/                  |             |
+|    ep_len_mean            | 270         |
+|    ep_rew_mean            | -22.9       |
+| time/                     |             |
+|    fps                    | 388         |
+|    iterations             | 6           |
+|    time_elapsed           | 63          |
+|    total_timesteps        | 24576       |
+| train/                    |             |
+|    approx_kl              | 0.040434834 |
+|    clip_fraction          | 0.368       |
+|    clip_range             | 0.2         |
+|    entropy_loss           | -17.4       |
+|    explained_variance     | -1.57       |
+|    learning_rate          | 0.0003      |
+|    loss                   | 5.17        |
+|    n_updates              | 13390       |
+|    policy_gradient_loss   | 0.00476     |
+|    std                    | 3.3         |
+|    value_loss             | 44.3        |
+-------------------------------------------
+------------------------------------------
+| manipularl/               |            |
+|    collision_rate         | 0.45       |
+|    dream_calls_cumulative | 5600       |
+|    dream_steps_cumulative | 44625      |
+|    grasp_failure_rate     | 0.904      |
+|    insert_depth_mean      | 0          |
+|    insert_tilt_deg_mean   | 0.00738    |
+|    success_rate           | 0          |
+| rollout/                  |            |
+|    ep_len_mean            | 268        |
+|    ep_rew_mean            | -21.3      |
+| time/                     |            |
+|    fps                    | 386        |
+|    iterations             | 7          |
+|    time_elapsed           | 74         |
+|    total_timesteps        | 28672      |
+| train/                    |            |
+|    approx_kl              | 0.06267342 |
+|    clip_fraction          | 0.301      |
+|    clip_range             | 0.2        |
+|    entropy_loss           | -17.4      |
+|    explained_variance     | 0.699      |
+|    learning_rate          | 0.0003     |
+|    loss                   | 2.23       |
+|    n_updates              | 13400      |
+|    policy_gradient_loss   | -0.021     |
+|    std                    | 3.3        |
+|    value_loss             | 9.63       |
+------------------------------------------
+------------------------------------------
+| manipularl/               |            |
+|    collision_rate         | 0.45       |
+|    dream_calls_cumulative | 6400       |
+|    dream_steps_cumulative | 51023      |
+|    grasp_failure_rate     | 0.912      |
+|    insert_depth_mean      | 5.34e-05   |
+|    insert_tilt_deg_mean   | 1.31       |
+|    success_rate           | 0          |
+| rollout/                  |            |
+|    ep_len_mean            | 270        |
+|    ep_rew_mean            | -22.9      |
+| time/                     |            |
+|    fps                    | 375        |
+|    iterations             | 8          |
+|    time_elapsed           | 87         |
+|    total_timesteps        | 32768      |
+| train/                    |            |
+|    approx_kl              | 0.10913793 |
+|    clip_fraction          | 0.434      |
+|    clip_range             | 0.2        |
+|    entropy_loss           | -17.4      |
+|    explained_variance     | 0.937      |
+|    learning_rate          | 0.0003     |
+|    loss                   | 0.79       |
+|    n_updates              | 13410      |
+|    policy_gradient_loss   | -0.0192    |
+|    std                    | 3.3        |
+|    value_loss             | 3.29       |
+------------------------------------------
+-----------------------------------------
+| manipularl/               |           |
+|    collision_rate         | 0.45      |
+|    dream_calls_cumulative | 7200      |
+|    dream_steps_cumulative | 57423     |
+|    grasp_failure_rate     | 0.916     |
+|    insert_depth_mean      | 5.34e-05  |
+|    insert_tilt_deg_mean   | 1.74      |
+|    success_rate           | 0         |
+| rollout/                  |           |
+|    ep_len_mean            | 268       |
+|    ep_rew_mean            | -21.1     |
+| time/                     |           |
+|    fps                    | 359       |
+|    iterations             | 9         |
+|    time_elapsed           | 102       |
+|    total_timesteps        | 36864     |
+| train/                    |           |
+|    approx_kl              | 0.1061423 |
+|    clip_fraction          | 0.365     |
+|    clip_range             | 0.2       |
+|    entropy_loss           | -17.4     |
+|    explained_variance     | 0.44      |
+|    learning_rate          | 0.0003    |
+|    loss                   | 3.65      |
+|    n_updates              | 13420     |
+|    policy_gradient_loss   | 0.00206   |
+|    std                    | 3.31      |
+|    value_loss             | 17.4      |
+-----------------------------------------
+-------------------------------------------
+| manipularl/               |             |
+|    collision_rate         | 0.43        |
+|    dream_calls_cumulative | 8000        |
+|    dream_steps_cumulative | 63793       |
+|    grasp_failure_rate     | 0.925       |
+|    insert_depth_mean      | 5.34e-05    |
+|    insert_tilt_deg_mean   | 3.05        |
+|    success_rate           | 0           |
+| rollout/                  |             |
+|    ep_len_mean            | 275         |
+|    ep_rew_mean            | -22.7       |
+| time/                     |             |
+|    fps                    | 345         |
+|    iterations             | 10          |
+|    time_elapsed           | 118         |
+|    total_timesteps        | 40960       |
+| train/                    |             |
+|    approx_kl              | 0.021721652 |
+|    clip_fraction          | 0.27        |
+|    clip_range             | 0.2         |
+|    entropy_loss           | -17.4       |
+|    explained_variance     | 0.404       |
+|    learning_rate          | 0.0003      |
+|    loss                   | 9.03        |
+|    n_updates              | 13430       |
+|    policy_gradient_loss   | -0.00688    |
+|    std                    | 3.31        |
+|    value_loss             | 52.2        |
+-------------------------------------------
+-------------------------------------------
+| manipularl/               |             |
+|    collision_rate         | 0.46        |
+|    dream_calls_cumulative | 8800        |
+|    dream_steps_cumulative | 70192       |
+|    grasp_failure_rate     | 0.934       |
+|    insert_depth_mean      | 0.00125     |
+|    insert_tilt_deg_mean   | 3.48        |
+|    success_rate           | 0.02        |
+| rollout/                  |             |
+|    ep_len_mean            | 259         |
+|    ep_rew_mean            | -20.2       |
+| time/                     |             |
+|    fps                    | 342         |
+|    iterations             | 11          |
+|    time_elapsed           | 131         |
+|    total_timesteps        | 45056       |
+| train/                    |             |
+|    approx_kl              | 0.115713194 |
+|    clip_fraction          | 0.322       |
+|    clip_range             | 0.2         |
+|    entropy_loss           | -17.4       |
+|    explained_variance     | 0.704       |
+|    learning_rate          | 0.0003      |
+|    loss                   | 1.7         |
+|    n_updates              | 13440       |
+|    policy_gradient_loss   | -0.0144     |
+|    std                    | 3.31        |
+|    value_loss             | 6.93        |
+-------------------------------------------
+-------------------------------------------
+| manipularl/               |             |
+|    collision_rate         | 0.5         |
+|    dream_calls_cumulative | 9600        |
+|    dream_steps_cumulative | 76592       |
+|    grasp_failure_rate     | 0.935       |
+|    insert_depth_mean      | 0.00188     |
+|    insert_tilt_deg_mean   | 3.48        |
+|    success_rate           | 0.03        |
+| rollout/                  |             |
+|    ep_len_mean            | 245         |
+|    ep_rew_mean            | -17.5       |
+| time/                     |             |
+|    fps                    | 330         |
+|    iterations             | 12          |
+|    time_elapsed           | 148         |
+|    total_timesteps        | 49152       |
+| train/                    |             |
+|    approx_kl              | 0.048425604 |
+|    clip_fraction          | 0.319       |
+|    clip_range             | 0.2         |
+|    entropy_loss           | -17.4       |
+|    explained_variance     | 0.718       |
+|    learning_rate          | 0.0003      |
+|    loss                   | 3.67        |
+|    n_updates              | 13450       |
+|    policy_gradient_loss   | -0.00212    |
+|    std                    | 3.32        |
+|    value_loss             | 14.9        |
+-------------------------------------------
+------------------------------------------
+| manipularl/               |            |
+|    collision_rate         | 0.5        |
+|    dream_calls_cumulative | 10400      |
+|    dream_steps_cumulative | 82992      |
+|    grasp_failure_rate     | 0.936      |
+|    insert_depth_mean      | 0.00248    |
+|    insert_tilt_deg_mean   | 3.04       |
+|    success_rate           | 0.04       |
+| rollout/                  |            |
+|    ep_len_mean            | 241        |
+|    ep_rew_mean            | -19.2      |
+| time/                     |            |
+|    fps                    | 321        |
+|    iterations             | 13         |
+|    time_elapsed           | 165        |
+|    total_timesteps        | 53248      |
+| train/                    |            |
+|    approx_kl              | 0.02537504 |
+|    clip_fraction          | 0.252      |
+|    clip_range             | 0.2        |
+|    entropy_loss           | -17.4      |
+|    explained_variance     | 0.365      |
+|    learning_rate          | 0.0003     |
+|    loss                   | 17         |
+|    n_updates              | 13460      |
+|    policy_gradient_loss   | -0.00865   |
+|    std                    | 3.32       |
+|    value_loss             | 97.3       |
+------------------------------------------
+-------------------------------------------
+| manipularl/               |             |
+|    collision_rate         | 0.49        |
+|    dream_calls_cumulative | 11200       |
+|    dream_steps_cumulative | 89392       |
+|    grasp_failure_rate     | 0.945       |
+|    insert_depth_mean      | 0.00363     |
+|    insert_tilt_deg_mean   | 2.18        |
+|    success_rate           | 0.06        |
+| rollout/                  |             |
+|    ep_len_mean            | 244         |
+|    ep_rew_mean            | -16.1       |
+| time/                     |             |
+|    fps                    | 311         |
+|    iterations             | 14          |
+|    time_elapsed           | 184         |
+|    total_timesteps        | 57344       |
+| train/                    |             |
+|    approx_kl              | 0.029046124 |
+|    clip_fraction          | 0.168       |
+|    clip_range             | 0.2         |
+|    entropy_loss           | -17.4       |
+|    explained_variance     | -0.826      |
+|    learning_rate          | 0.0003      |
+|    loss                   | 5.56        |
+|    n_updates              | 13470       |
+|    policy_gradient_loss   | -0.0156     |
+|    std                    | 3.32        |
+|    value_loss             | 33.8        |
+-------------------------------------------
+-------------------------------------------
+| manipularl/               |             |
+|    collision_rate         | 0.51        |
+|    dream_calls_cumulative | 12000       |
+|    dream_steps_cumulative | 95573       |
+|    grasp_failure_rate     | 0.947       |
+|    insert_depth_mean      | 0.00483     |
+|    insert_tilt_deg_mean   | 2.47        |
+|    success_rate           | 0.08        |
+| rollout/                  |             |
+|    ep_len_mean            | 234         |
+|    ep_rew_mean            | -17.4       |
+| time/                     |             |
+|    fps                    | 306         |
+|    iterations             | 15          |
+|    time_elapsed           | 200         |
+|    total_timesteps        | 61440       |
+| train/                    |             |
+|    approx_kl              | 0.023729643 |
+|    clip_fraction          | 0.177       |
+|    clip_range             | 0.2         |
+|    entropy_loss           | -17.4       |
+|    explained_variance     | 0.795       |
+|    learning_rate          | 0.0003      |
+|    loss                   | 4.66        |
+|    n_updates              | 13480       |
+|    policy_gradient_loss   | -0.0164     |
+|    std                    | 3.32        |
+|    value_loss             | 24.7        |
+-------------------------------------------

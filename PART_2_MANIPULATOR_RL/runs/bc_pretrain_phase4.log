@@ -1,0 +1,12 @@
+pybullet build time: Nov 28 2023 23:45:17
+[bc] 8854 transitions, obs (369,), act (8,)
+  epoch   1  train_loss +8.7108  val_action_mse 0.2606
+  epoch   5  train_loss +7.7152  val_action_mse 0.0899
+  epoch  10  train_loss +7.4046  val_action_mse 0.0524
+  epoch  15  train_loss +7.2397  val_action_mse 0.0426
+  epoch  20  train_loss +7.1043  val_action_mse 0.0376
+  epoch  25  train_loss +6.9804  val_action_mse 0.0344
+  epoch  30  train_loss +6.8627  val_action_mse 0.0323
+  epoch  35  train_loss +6.7493  val_action_mse 0.0304
+  epoch  40  train_loss +6.6391  val_action_mse 0.0290
+[bc] saved runs/phase4_bc_insert/model.zip

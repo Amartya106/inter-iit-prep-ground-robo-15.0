@@ -1,0 +1,410 @@
+pybullet build time: Nov 28 2023 23:45:17
+[train] phase=3 algo=ppo n_envs=12 steps=60,000 frame_stack=3 -> runs/phase3_ppo_v8_jitter_ultrafine
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+[train] warm-starting from runs/phase3_ppo_v7_terminal/model.zip
+[train] grasp-curriculum anneal 0.35 -> 0.0 over 50% of training
+[train] obstacle-count curriculum (0, 1) -> (2, 5) over 50% of training
+Logging to runs/phase3_ppo_v8_jitter_ultrafine/tb/PPO_1
+------------------------------------
+| manipularl/           |          |
+|    collision_rate     | 0.086    |
+|    grasp_curriculum   | 0.278    |
+|    grasp_failure_rate | 0.468    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 2        |
+|    obstacle_range_lo  | 0        |
+|    success_rate       | 0.892    |
+| rollout/              |          |
+|    ep_len_mean        | 49.7     |
+|    ep_rew_mean        | 50.6     |
+| time/                 |          |
+|    fps                | 1984     |
+|    iterations         | 1        |
+|    time_elapsed       | 3        |
+|    total_timesteps    | 6144     |
+------------------------------------
+Eval num_timesteps=9996, episode_reward=48.19 +/- 27.15
+Episode length: 73.00 +/- 94.89
+-----------------------------------------
+| eval/                   |             |
+|    mean_ep_length       | 73          |
+|    mean_reward          | 48.2        |
+| manipularl/             |             |
+|    collision_rate       | 0.02        |
+|    grasp_curriculum     | 0.234       |
+|    grasp_failure_rate   | 0.545       |
+|    insert_depth_mean    | 0           |
+|    obstacle_range_hi    | 2           |
+|    obstacle_range_lo    | 1           |
+|    success_rate         | 0.89        |
+| time/                   |             |
+|    total_timesteps      | 9996        |
+| train/                  |             |
+|    approx_kl            | 0.045043614 |
+|    clip_fraction        | 0.265       |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -17.3       |
+|    explained_variance   | 0.663       |
+|    learning_rate        | 0.0003      |
+|    loss                 | 20.3        |
+|    n_updates            | 13290       |
+|    policy_gradient_loss | -0.0446     |
+|    std                  | 3.26        |
+|    value_loss           | 73.7        |
+-----------------------------------------
+New best mean reward!
+------------------------------------
+| manipularl/           |          |
+|    collision_rate     | 0.02     |
+|    grasp_curriculum   | 0.207    |
+|    grasp_failure_rate | 0.575    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 3        |
+|    obstacle_range_lo  | 1        |
+|    success_rate       | 0.86     |
+| rollout/              |          |
+|    ep_len_mean        | 83       |
+|    ep_rew_mean        | 49.2     |
+| time/                 |          |
+|    fps                | 1490     |
+|    iterations         | 2        |
+|    time_elapsed       | 8        |
+|    total_timesteps    | 12288    |
+------------------------------------
+-----------------------------------------
+| manipularl/             |             |
+|    collision_rate       | 0.03        |
+|    grasp_curriculum     | 0.135       |
+|    grasp_failure_rate   | 0.711       |
+|    insert_depth_mean    | 0           |
+|    obstacle_range_hi    | 3           |
+|    obstacle_range_lo    | 1           |
+|    success_rate         | 0.87        |
+| rollout/                |             |
+|    ep_len_mean          | 73.3        |
+|    ep_rew_mean          | 52.6        |
+| time/                   |             |
+|    fps                  | 1634        |
+|    iterations           | 3           |
+|    time_elapsed         | 11          |
+|    total_timesteps      | 18432       |
+| train/                  |             |
+|    approx_kl            | 0.082699776 |
+|    clip_fraction        | 0.365       |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -17.3       |
+|    explained_variance   | 0.876       |
+|    learning_rate        | 0.0003      |
+|    loss                 | 9.35        |
+|    n_updates            | 13300       |
+|    policy_gradient_loss | -0.0516     |
+|    std                  | 3.27        |
+|    value_loss           | 33.9        |
+-----------------------------------------
+Eval num_timesteps=19992, episode_reward=42.43 +/- 29.67
+Episode length: 45.65 +/- 41.28
+-----------------------------------------
+| eval/                   |             |
+|    mean_ep_length       | 45.6        |
+|    mean_reward          | 42.4        |
+| manipularl/             |             |
+|    collision_rate       | 0.03        |
+|    grasp_curriculum     | 0.117       |
+|    grasp_failure_rate   | 0.715       |
+|    insert_depth_mean    | 0           |
+|    obstacle_range_hi    | 4           |
+|    obstacle_range_lo    | 1           |
+|    success_rate         | 0.9         |
+| time/                   |             |
+|    total_timesteps      | 19992       |
+| train/                  |             |
+|    approx_kl            | 0.070183605 |
+|    clip_fraction        | 0.369       |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -17.3       |
+|    explained_variance   | 0.884       |
+|    learning_rate        | 0.0003      |
+|    loss                 | 12          |
+|    n_updates            | 13310       |
+|    policy_gradient_loss | -0.0556     |
+|    std                  | 3.28        |
+|    value_loss           | 35.6        |
+-----------------------------------------
+------------------------------------
+| manipularl/           |          |
+|    collision_rate     | 0.13     |
+|    grasp_curriculum   | 0.0633   |
+|    grasp_failure_rate | 0.799    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 4        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.8      |
+| rollout/              |          |
+|    ep_len_mean        | 66.6     |
+|    ep_rew_mean        | 47.8     |
+| time/                 |          |
+|    fps                | 1545     |
+|    iterations         | 4        |
+|    time_elapsed       | 15       |
+|    total_timesteps    | 24576    |
+------------------------------------
+Eval num_timesteps=29988, episode_reward=38.42 +/- 31.64
+Episode length: 50.55 +/- 70.23
+----------------------------------------
+| eval/                   |            |
+|    mean_ep_length       | 50.5       |
+|    mean_reward          | 38.4       |
+| manipularl/             |            |
+|    collision_rate       | 0.21       |
+|    grasp_curriculum     | 0.00028    |
+|    grasp_failure_rate   | 0.799      |
+|    insert_depth_mean    | 0          |
+|    obstacle_range_hi    | 5          |
+|    obstacle_range_lo    | 2          |
+|    success_rate         | 0.78       |
+| time/                   |            |
+|    total_timesteps      | 29988      |
+| train/                  |            |
+|    approx_kl            | 0.05250151 |
+|    clip_fraction        | 0.318      |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -17.3      |
+|    explained_variance   | 0.797      |
+|    learning_rate        | 0.0003     |
+|    loss                 | 13.3       |
+|    n_updates            | 13320      |
+|    policy_gradient_loss | -0.0448    |
+|    std                  | 3.28       |
+|    value_loss           | 45.4       |
+----------------------------------------
+------------------------------------
+| manipularl/           |          |
+|    collision_rate     | 0.22     |
+|    grasp_curriculum   | 0        |
+|    grasp_failure_rate | 0.803    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 5        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.77     |
+| rollout/              |          |
+|    ep_len_mean        | 53.4     |
+|    ep_rew_mean        | 46.7     |
+| time/                 |          |
+|    fps                | 1500     |
+|    iterations         | 5        |
+|    time_elapsed       | 20       |
+|    total_timesteps    | 30720    |
+------------------------------------
+-----------------------------------------
+| manipularl/             |             |
+|    collision_rate       | 0.17        |
+|    grasp_curriculum     | 0           |
+|    grasp_failure_rate   | 0.811       |
+|    insert_depth_mean    | 0           |
+|    obstacle_range_hi    | 5           |
+|    obstacle_range_lo    | 2           |
+|    success_rate         | 0.77        |
+| rollout/                |             |
+|    ep_len_mean          | 75          |
+|    ep_rew_mean          | 44.2        |
+| time/                   |             |
+|    fps                  | 1533        |
+|    iterations           | 6           |
+|    time_elapsed         | 24          |
+|    total_timesteps      | 36864       |
+| train/                  |             |
+|    approx_kl            | 0.063565135 |
+|    clip_fraction        | 0.359       |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -17.3       |
+|    explained_variance   | 0.678       |
+|    learning_rate        | 0.0003      |
+|    loss                 | 17.4        |
+|    n_updates            | 13330       |
+|    policy_gradient_loss | -0.0607     |
+|    std                  | 3.28        |
+|    value_loss           | 53.6        |
+-----------------------------------------
+Eval num_timesteps=39984, episode_reward=41.67 +/- 33.98
+Episode length: 71.30 +/- 94.10
+----------------------------------------
+| eval/                   |            |
+|    mean_ep_length       | 71.3       |
+|    mean_reward          | 41.7       |
+| manipularl/             |            |
+|    collision_rate       | 0.12       |
+|    grasp_curriculum     | 0          |
+|    grasp_failure_rate   | 0.786      |
+|    insert_depth_mean    | 0          |
+|    obstacle_range_hi    | 5          |
+|    obstacle_range_lo    | 2          |
+|    success_rate         | 0.83       |
+| time/                   |            |
+|    total_timesteps      | 39984      |
+| train/                  |            |
+|    approx_kl            | 0.09311513 |
+|    clip_fraction        | 0.384      |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -17.3      |
+|    explained_variance   | 0.833      |
+|    learning_rate        | 0.0003     |
+|    loss                 | 12.8       |
+|    n_updates            | 13340      |
+|    policy_gradient_loss | -0.0678    |
+|    std                  | 3.29       |
+|    value_loss           | 37.4       |
+----------------------------------------
+------------------------------------
+| manipularl/           |          |
+|    collision_rate     | 0.09     |
+|    grasp_curriculum   | 0        |
+|    grasp_failure_rate | 0.794    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 5        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.85     |
+| rollout/              |          |
+|    ep_len_mean        | 80.9     |
+|    ep_rew_mean        | 48.1     |
+| time/                 |          |
+|    fps                | 1443     |
+|    iterations         | 7        |
+|    time_elapsed       | 29       |
+|    total_timesteps    | 43008    |
+------------------------------------
+----------------------------------------
+| manipularl/             |            |
+|    collision_rate       | 0.23       |
+|    grasp_curriculum     | 0          |
+|    grasp_failure_rate   | 0.83       |
+|    insert_depth_mean    | 0          |
+|    obstacle_range_hi    | 5          |
+|    obstacle_range_lo    | 2          |
+|    success_rate         | 0.72       |
+| rollout/                |            |
+|    ep_len_mean          | 75         |
+|    ep_rew_mean          | 40.4       |
+| time/                   |            |
+|    fps                  | 1483       |
+|    iterations           | 8          |
+|    time_elapsed         | 33         |
+|    total_timesteps      | 49152      |
+| train/                  |            |
+|    approx_kl            | 0.07770745 |
+|    clip_fraction        | 0.394      |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -17.3      |
+|    explained_variance   | 0.75       |
+|    learning_rate        | 0.0003     |
+|    loss                 | 16.7       |
+|    n_updates            | 13350      |
+|    policy_gradient_loss | -0.0555    |
+|    std                  | 3.29       |
+|    value_loss           | 48.4       |
+----------------------------------------
+Eval num_timesteps=49980, episode_reward=32.01 +/- 30.92
+Episode length: 59.40 +/- 71.57
+----------------------------------------
+| eval/                   |            |
+|    mean_ep_length       | 59.4       |
+|    mean_reward          | 32         |
+| manipularl/             |            |
+|    collision_rate       | 0.24       |
+|    grasp_curriculum     | 0          |
+|    grasp_failure_rate   | 0.827      |
+|    insert_depth_mean    | 0          |
+|    obstacle_range_hi    | 5          |
+|    obstacle_range_lo    | 2          |
+|    success_rate         | 0.71       |
+| time/                   |            |
+|    total_timesteps      | 49980      |
+| train/                  |            |
+|    approx_kl            | 0.07680056 |
+|    clip_fraction        | 0.387      |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -17.3      |
+|    explained_variance   | 0.73       |
+|    learning_rate        | 0.0003     |
+|    loss                 | 16.7       |
+|    n_updates            | 13360      |
+|    policy_gradient_loss | -0.0623    |
+|    std                  | 3.3        |
+|    value_loss           | 46.5       |
+----------------------------------------
+------------------------------------
+| manipularl/           |          |
+|    collision_rate     | 0.14     |
+|    grasp_curriculum   | 0        |
+|    grasp_failure_rate | 0.824    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 5        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.82     |
+| rollout/              |          |
+|    ep_len_mean        | 65.1     |
+|    ep_rew_mean        | 48.9     |
+| time/                 |          |
+|    fps                | 1435     |
+|    iterations         | 9        |
+|    time_elapsed       | 38       |
+|    total_timesteps    | 55296    |
+------------------------------------
+Eval num_timesteps=59976, episode_reward=44.89 +/- 28.79
+Episode length: 35.35 +/- 15.88
+----------------------------------------
+| eval/                   |            |
+|    mean_ep_length       | 35.4       |
+|    mean_reward          | 44.9       |
+| manipularl/             |            |
+|    collision_rate       | 0.15       |
+|    grasp_curriculum     | 0          |
+|    grasp_failure_rate   | 0.842      |
+|    insert_depth_mean    | 0          |
+|    obstacle_range_hi    | 5          |
+|    obstacle_range_lo    | 2          |
+|    success_rate         | 0.8        |
+| time/                   |            |
+|    total_timesteps      | 59976      |
+| train/                  |            |
+|    approx_kl            | 0.07379564 |
+|    clip_fraction        | 0.363      |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -17.3      |
+|    explained_variance   | 0.765      |
+|    learning_rate        | 0.0003     |
+|    loss                 | 15.5       |
+|    n_updates            | 13370      |
+|    policy_gradient_loss | -0.0653    |
+|    std                  | 3.3        |
+|    value_loss           | 49         |
+----------------------------------------
+------------------------------------
+| manipularl/           |          |
+|    collision_rate     | 0.16     |
+|    grasp_curriculum   | 0        |
+|    grasp_failure_rate | 0.833    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 5        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.78     |
+| rollout/              |          |
+|    ep_len_mean        | 71.5     |
+|    ep_rew_mean        | 45.8     |
+| time/                 |          |
+|    fps                | 1426     |
+|    iterations         | 10       |
+|    time_elapsed       | 43       |
+|    total_timesteps    | 61440    |
+------------------------------------
+[train] saved runs/phase3_ppo_v8_jitter_ultrafine/model.zip and runs/phase3_ppo_v8_jitter_ultrafine/vecnormalize.pkl

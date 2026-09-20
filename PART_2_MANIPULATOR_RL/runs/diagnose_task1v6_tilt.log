@@ -1,0 +1,28 @@
+pybullet build time: Nov 28 2023 23:45:17
+N=150
+success: 0.000
+ever_grasped: 0.65
+collided (any point): 0.29
+collided BEFORE ever grasping: 0.23
+mean grasp_attempts per episode: 66.4  mean grasp_failures: 65.1
+mean steps: 299.0
+
+NEVER-grasped episodes: 52/150 (0.35)
+  mean grasp_attempts in never-grasped eps: 152.3
+
+of ever-grasped episodes (98/150):
+  min_xy_err: mean=6.4cm  best=0.16cm
+  frac with xy_err < insert_xy_tol(1cm): 0.08
+  frac with xy_err < 3.5cm: 0.28
+  min_tilt_deg: mean=0.22deg  best=0.00deg
+  frac with tilt < insert_tilt_tol(10deg): 0.99
+  grasp_toggles among grasped eps: mean=3.1 median=1 max=21
+  frac of grasped eps with >5 toggles (severe flicker): 0.12
+  frac of grasped eps with 0-2 toggles (clean single grasp): 0.64
+
+collision-steps total: 44
+  link7                     23  (52.3%)
+  link6                     12  (27.3%)
+  link5                      9  (20.5%)
+  peg(held object)           3  (6.8%)
+  link4                      1  (2.3%)

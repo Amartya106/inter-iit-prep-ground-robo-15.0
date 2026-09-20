@@ -1,0 +1,16 @@
+pybullet build time: Nov 28 2023 23:45:17
+  10/100 successful demos (12 attempts, 83% hit rate)
+  20/100 successful demos (23 attempts, 87% hit rate)
+  30/100 successful demos (35 attempts, 86% hit rate)
+  40/100 successful demos (48 attempts, 83% hit rate)
+  50/100 successful demos (62 attempts, 81% hit rate)
+  60/100 successful demos (74 attempts, 81% hit rate)
+  70/100 successful demos (85 attempts, 82% hit rate)
+  80/100 successful demos (101 attempts, 79% hit rate)
+  90/100 successful demos (113 attempts, 80% hit rate)
+  100/100 successful demos (126 attempts, 79% hit rate)
+
+[collect] 100/100 demos collected in 126 attempts (79% hit rate)
+[collect] episode length: mean=51.0 min=21 max=284
+[collect] total transitions: 5099
+[collect] wrote runs/gail_demos_e24/trajectories.pkl

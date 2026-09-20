@@ -1,0 +1,32 @@
+# Phase 4 -- monolithic task, "70-30 split": 70% real
+# environment interaction, 30% synthetic (dreamed) data, exactly, every
+# rollout. n_steps bumped to 800 (from the 512 default) specifically to
+# make this land on round, non-overlapping numbers: dream_env_frac=1.0
+# (every env contributes), n_branches=30 x horizon=8 = 240 dreamed steps of
+# 800 total per env = EXACTLY 30.0%, comfortably non-overlapping (240 << 800,
+# unlike v3's 100-branch config which needed the full 1024 just to fit).
+#
+# Warm-started from runs/phase3_ppo_best (E48), same as v1/v2/v3 -- not the
+# multi-expert BC checkpoint (separate, still-unresolved throughput issue).
+phase: 4
+algo: ppo
+n_envs: 8
+frame_stack: 3
+dream_model_path: runs/dynamics_model_full4.pt
+dream_horizon: 8
+dream_env_frac: 1.0
+dream_n_branches: 30
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 800
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

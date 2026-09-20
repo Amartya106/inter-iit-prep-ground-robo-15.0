@@ -1,0 +1,91 @@
+=== ckpt_500000 (OFFICIAL predicate) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.260 steps=313 path_eff=0.17 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_OFFICIAL/ckpt_500000.csv
+=== ckpt_500000 (RELAXED predicate: depth>=1cm, xy<2cm, tilt<30deg, hold=1) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.250 steps=314 path_eff=0.15 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_RELAXED/ckpt_500000.csv
+=== ckpt_1000000 (OFFICIAL predicate) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.285 steps=301 path_eff=0.17 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_OFFICIAL/ckpt_1000000.csv
+=== ckpt_1000000 (RELAXED predicate: depth>=1cm, xy<2cm, tilt<30deg, hold=1) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.290 steps=300 path_eff=0.16 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_RELAXED/ckpt_1000000.csv
+=== ckpt_1500000 (OFFICIAL predicate) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.245 steps=315 path_eff=0.16 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_OFFICIAL/ckpt_1500000.csv
+=== ckpt_1500000 (RELAXED predicate: depth>=1cm, xy<2cm, tilt<30deg, hold=1) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.245 steps=315 path_eff=0.14 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_RELAXED/ckpt_1500000.csv
+=== ckpt_2000000 (OFFICIAL predicate) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.330 steps=286 path_eff=0.19 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_OFFICIAL/ckpt_2000000.csv
+=== ckpt_2000000 (RELAXED predicate: depth>=1cm, xy<2cm, tilt<30deg, hold=1) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.325 steps=288 path_eff=0.18 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_RELAXED/ckpt_2000000.csv
+=== ckpt_2500000 (OFFICIAL predicate) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.360 steps=275 path_eff=0.22 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_OFFICIAL/ckpt_2500000.csv
+=== ckpt_2500000 (RELAXED predicate: depth>=1cm, xy<2cm, tilt<30deg, hold=1) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.350 steps=279 path_eff=0.21 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_RELAXED/ckpt_2500000.csv
+=== ckpt_3000000 (OFFICIAL predicate) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.355 steps=277 path_eff=0.24 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_OFFICIAL/ckpt_3000000.csv
+=== ckpt_3000000 (RELAXED predicate: depth>=1cm, xy<2cm, tilt<30deg, hold=1) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.345 steps=279 path_eff=0.22 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_RELAXED/ckpt_3000000.csv
+=== ckpt_3500000 (OFFICIAL predicate) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.415 steps=268 path_eff=0.24 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_OFFICIAL/ckpt_3500000.csv
+=== ckpt_3500000 (RELAXED predicate: depth>=1cm, xy<2cm, tilt<30deg, hold=1) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.405 steps=271 path_eff=0.23 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_RELAXED/ckpt_3500000.csv
+=== ckpt_4000000 (OFFICIAL predicate) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.445 steps=258 path_eff=0.24 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_OFFICIAL/ckpt_4000000.csv
+=== ckpt_4000000 (RELAXED predicate: depth>=1cm, xy<2cm, tilt<30deg, hold=1) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.435 steps=262 path_eff=0.22 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_RELAXED/ckpt_4000000.csv
+=== ckpt_4500000 (OFFICIAL predicate) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.460 steps=256 path_eff=0.23 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_OFFICIAL/ckpt_4500000.csv
+=== ckpt_4500000 (RELAXED predicate: depth>=1cm, xy<2cm, tilt<30deg, hold=1) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.485 steps=250 path_eff=0.22 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_RELAXED/ckpt_4500000.csv
+=== ckpt_5000000 (OFFICIAL predicate) ===
+pybullet build time: Nov 28 2023 23:45:17
+=== ckpt_5000000 (OFFICIAL predicate) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.435 steps=263 path_eff=0.20 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_OFFICIAL/ckpt_5000000.csv
+=== ckpt_5000000 (RELAXED predicate) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.435 steps=263 path_eff=0.19 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_RELAXED/ckpt_5000000.csv
+=== ckpt_best (OFFICIAL predicate) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.460 steps=258 path_eff=0.23 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_OFFICIAL/ckpt_best.csv
+=== ckpt_best (RELAXED predicate) ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.470 steps=258 path_eff=0.21 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_relaxed_RELAXED/ckpt_best.csv
+ALL_DONE

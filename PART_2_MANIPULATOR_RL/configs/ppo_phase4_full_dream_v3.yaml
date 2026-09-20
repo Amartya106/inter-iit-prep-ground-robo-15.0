@@ -1,0 +1,39 @@
+# Phase 4 -- monolithic task, "dream frac 1, horizon 8, 100 branches" --
+# an extreme, near-fully-synthetic variant. dream_env_frac=1.0 (every env dreams each rollout) x
+# n_branches=100 x horizon=8 = 800 dreamed steps/env -- EXCEEDS the default
+# 512-step buffer, so n_steps is bumped to 1024 here specifically so all 100
+# branches actually fit without overlapping/overwriting each other (with
+# n_steps=512 most of the 100 branches would get silently overwritten by
+# later ones before ever contributing, wasted compute). Even at 1024,
+# 100 branches x 8 steps = 800 of 1024 slots (~78%) per env, and with EVERY
+# env selected (frac=1.0), this means ~78% of the ENTIRE training buffer is
+# synthetic every single rollout -- a fundamentally different regime from
+# E51/E52 (~1%/~8.8%), effectively training mostly on the dynamics model's
+# imagination rather than real environment interaction. Flagged clearly
+# before launch, not discovered after.
+#
+# Warm-started from runs/phase3_ppo_best (E48) -- NOT the multi-expert BC
+# checkpoint, to avoid confounding this experiment with that still-
+# unexplained training-throughput slowdown (a separate, unresolved issue).
+phase: 4
+algo: ppo
+n_envs: 8
+frame_stack: 3
+dream_model_path: runs/dynamics_model_full4.pt
+dream_horizon: 8
+dream_env_frac: 1.0
+dream_n_branches: 100
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 1024
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

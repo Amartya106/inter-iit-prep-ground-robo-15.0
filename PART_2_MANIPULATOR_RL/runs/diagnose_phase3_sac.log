@@ -1,0 +1,26 @@
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/scripts/diagnose_phase3.py:114: RuntimeWarning: Mean of empty slice.
+  print(f"mean steps: all={steps_all.mean():.1f}  success={steps_succ.mean():.1f}  fail={steps_fail.mean():.1f}")
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/.venv/lib/python3.10/site-packages/numpy/core/_methods.py:129: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+=== runs/phase3_sac ===
+N=150  success=0.00
+failures: 150
+  of failures: collided                     0.66
+  of failures: never grasped                 0.95
+  of failures: grasped, never reached target 0.05
+  of failures: reached target, never released0.00
+  of failures: collided AND never grasped    0.61
+  of failures: collided AFTER grasping       0.05
+mean steps: all=172.4  success=nan  fail=172.4
+grasp formed: 8/150 (0.05), mean t_first_grasp=62.9
+mean obstacle clearance kept -- empty-handed: 12.5cm (n=150)   carrying: 10.3cm (n=8)
+
+collision-steps total: 99
+which part of the arm/peg was in contact (a step can count toward >1 if multi-contact):
+  link5                     29  (29.3% of collision-steps)
+  link4                     23  (23.2% of collision-steps)
+  link6                     19  (19.2% of collision-steps)
+  link7                     15  (15.2% of collision-steps)
+  link3                     13  (13.1% of collision-steps)
+  peg(held object)           3  (3.0% of collision-steps)

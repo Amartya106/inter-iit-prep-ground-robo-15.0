@@ -1,0 +1,40 @@
+# Phase 4 -- Task 1 v8a "settle-only". E42 (v7) combined THREE untested
+# changes at once and regressed comprehensively across every metric; this
+# isolates just ONE of them against E41's exact baseline, to get a clean
+# read on the settling-bonus hypothesis specifically.
+#
+# _SETTLE_BONUS_PER_STEP is a permanent, unconditional rewards.py term (no
+# toggle) -- it's active here automatically. Everything else matches E41's
+# recipe exactly: xy_err_weight_anneal_frac back to 0.7 (not v7's 0.35),
+# _GRASP_SHAPE_W/_IN_RANGE_BONUS reverted to their original 0.08/0.05
+# (the doubling that likely caused v7's regression is undone, project-wide,
+# in rewards.py itself -- not a per-config choice). No grasp_drop_pen
+# anneal, no linger penalty (those are the other two candidate variants,
+# ppo_phase4a_align_v8_dropanneal.yaml / _v8_linger.yaml).
+#
+# Fresh warm-start from E24 (matches every genuinely-new-incentive change
+# I've made).
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  align_only: true
+xy_err_weight_curriculum: true
+xy_err_weight_start: 1.5
+xy_err_weight_end: 1.0
+xy_err_weight_anneal_frac: 0.7
+total_timesteps: 2000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

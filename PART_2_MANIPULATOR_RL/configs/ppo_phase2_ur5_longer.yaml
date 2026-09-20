@@ -1,0 +1,33 @@
+# Phase 2 -- Pick and Place, UR5, ARM A of a 2-way retry after the first
+# attempt (ppo_phase2_ur5.yaml) converged to only 0.005 success (200-episode
+# eval). Diagnostic (see EXPERIMENTS.md/session log) found no hard geometric
+# blocker -- zero robot-table contacts at a standard grasp-approach pose --
+# just inconsistent reach/grasp/carry behavior, consistent with "hasn't
+# converged yet" rather than "structurally can't". This arm isolates
+# DURATION alone: identical hyperparameters to ppo_phase2_ur5.yaml,
+# total_timesteps raised 3.0M -> 5.0M (anneal_frac unchanged at 0.7, so the
+# curriculum still ends at the same FRACTION of training but more absolute
+# cold-start steps follow it). Run in parallel with ppo_phase2_ur5_explore.yaml
+# (ARM B: hyperparameter adjustment at the original duration) to isolate
+# which lever actually helps.
+phase: 2
+algo: ppo
+n_envs: 16
+frame_stack: 3
+grasp_curriculum: 0.7
+anneal_grasp_curriculum: true
+anneal_frac: 0.7
+total_timesteps: 5000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.008
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

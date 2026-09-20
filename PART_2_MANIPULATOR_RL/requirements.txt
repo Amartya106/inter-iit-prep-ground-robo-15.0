@@ -1,0 +1,28 @@
+# Part 2 - Manipulator RL. Python 3.10 (pybullet wheel availability).
+#
+#   uv venv --python 3.10 .venv
+#   uv pip install -r requirements.txt
+#
+# Torch is pinned to the CPU build: the policy/critic MLPs are ~100k params
+# over a ~120-dim state vector, so a 4 GB laptop GPU gives no speedup and the
+# host<->device copy per batch is a net loss. PyBullet stepping on CPU is the
+# real throughput bottleneck.
+
+pybullet==3.2.6
+gymnasium==0.29.1
+numpy==1.26.4
+
+# RL
+torch==2.2.2
+stable-baselines3==2.3.2
+sb3-contrib==2.3.0          # TQC
+
+# logging / eval / plots
+tensorboard==2.16.2
+pandas==2.2.2
+matplotlib==3.8.4
+imageio==2.34.1
+imageio-ffmpeg==0.4.9
+pyyaml==6.0.1
+tqdm==4.66.4
+rich==13.7.1

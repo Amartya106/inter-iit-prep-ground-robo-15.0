@@ -1,0 +1,6 @@
+=== ManipulaRL env throughput ===
+single-env step rate       :    932.4 steps/s
+reset rate (persistent)    :    769.3 resets/s
+reset rate (naive reload)  :     30.0 resets/s   -> persistent is 25.7x faster
+SubprocVecEnv x4  step rate :   1700.2 steps/s
+SubprocVecEnv x8  step rate :   2680.6 steps/s

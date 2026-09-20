@@ -1,0 +1,18 @@
+pybullet build time: Nov 28 2023 23:45:17
+  [IK] 25/150 episodes, 1 success, 10 transitions kept, 0.58s/ep
+  [IK] 50/150 episodes, 1 success, 10 transitions kept, 0.59s/ep
+  [IK] 75/150 episodes, 1 success, 966 transitions kept, 0.59s/ep
+  [IK] 100/150 episodes, 1 success, 966 transitions kept, 0.59s/ep
+  [IK] 125/150 episodes, 1 success, 966 transitions kept, 0.60s/ep
+  [IK] 150/150 episodes, 1 success, 1366 transitions kept, 0.60s/ep
+[IK] 1/150 = 1% success, 1366 transitions kept
+  [MPC] 10/60 episodes, 0 success, 0 transitions kept, 18.6s/ep
+  [MPC] 20/60 episodes, 0 success, 0 transitions kept, 14.7s/ep
+  [MPC] 30/60 episodes, 1 success, 10 transitions kept, 13.9s/ep
+  [MPC] 40/60 episodes, 1 success, 10 transitions kept, 14.9s/ep
+  [MPC] 50/60 episodes, 1 success, 10 transitions kept, 13.9s/ep
+  [MPC] 60/60 episodes, 1 success, 228 transitions kept, 14.2s/ep
+[MPC] 1/60 = 2% success, 228 transitions kept
+
+[combine] 1594 total transitions: IK 1366 (85.7%), MPC 228 (14.3%)
+[combine] saved runs/demos_phase4_ik_mpc/demos.npz and runs/demos_phase4_ik_mpc/vecnormalize.pkl

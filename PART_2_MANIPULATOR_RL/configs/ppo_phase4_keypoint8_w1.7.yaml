@@ -1,0 +1,50 @@
+# Phase 4 -- keypoint "docking" reward test, warm-started from runs/phase4_
+# full_dream (E51, the standing-best full monolithic Phase 4 checkpoint).
+#
+# New term (rewards.py's RewardComputer.keypoint_w, env.py's _state_dict()):
+# K points on the peg's bottom rim (its leading edge, the one that clips the
+# bore under tilt) matched -- best circular-fit rotation, yaw-invariant since
+# the peg is a rotationally symmetric cylinder -- against K points on the
+# bore's inner wall at the mouth, added into _potential() alongside (not
+# replacing) the existing xy_err/tilt/z_gap/depth terms. keypoint_n=8 (one
+# point per octagon face; verified via a synthetic-pose diagnostic to give
+# tighter yaw-invariance than K=4, std 0.0011 vs 0.0033 across a full yaw
+# sweep) and keypoint_w=1.7 (comparable order of magnitude to xy_err_weight=
+# 1.5, since keypoint_dist lives in the same ~0.003-0.03m range as xy_err).
+#
+# ISOLATED test, deliberately: everything else matches E51's own setup --
+# NOT using model-based dreaming this run (same reasoning as E57's own
+# config: isolates this one lever as its own clean comparison against E51,
+# not confounded by a dreaming-volume change), same n_envs/frame_stack/
+# hyperparams. tilt_weight/xy_err_weight are left at their existing defaults
+# (1.2/1.5, unchanged) rather than also retuned alongside this -- this run
+# tests whether keypoint_w helps ON TOP of the current reward, not a
+# simultaneous redesign of it.
+#
+# target_kl=0.05 set explicitly (see train.py's warm-start branch, new this
+# run): E57's own retrain (a comparably-sized reward-landscape change,
+# warm-started, no target_kl) showed real late-training instability
+# (approx_kl=0.81 vs PPO's typical ~0.01-0.05) that its own writeup flagged
+# as a plausible confound and recommended guarding against next time.
+phase: 4
+algo: ppo
+n_envs: 8
+frame_stack: 3
+keypoint_w: 1.7
+cfg_overrides:
+  keypoint_n: 8
+target_kl: 0.05
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

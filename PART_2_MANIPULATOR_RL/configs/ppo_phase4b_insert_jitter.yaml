@@ -1,0 +1,47 @@
+# Phase 4 -- Task 2 jitter-robustness. Same base recipe as
+# ppo_phase4b_insert.yaml (E33's original: 0.025 success, 0.00314 depth --
+# first nonzero formal-eval result in Phase 4's history), but adds
+# insert_xy_jitter/insert_tilt_jitter_deg -- a random xy offset (uniform
+# over a disk) and tilt applied to _start_pre_inserted()'s teleport target,
+# active for split=="train" ONLY (eval stays exactly precise, unchanged,
+# so eval numbers remain comparable to E33/E37).
+#
+# Motivation: Task 2 has never trained from anything but near-exact
+# alignment. The composed-eval experiments (E38/E39) proved
+# it cannot tolerate more than ~1.5cm of realistic hand-off misalignment --
+# looser starts produce EXACTLY 0.00000 depth, every time, even though the
+# underlying push-through skill exists (E33's diagnostic: best-case depth
+# 6.24cm from an exact start). 2cm xy / 5deg tilt sits just past where it
+# currently breaks, without being an overwhelming perturbation (well
+# inside the 10deg tilt success tolerance).
+#
+# Fresh warm-start from E24 (not E33/E37's checkpoint) -- the training
+# DISTRIBUTION itself is changing here, not just a reward term, and E33/
+# E37 both already converged specifically to the narrow, non-robust
+# distribution -- same "new incentive/distribution needs a clean base"
+# principle used for Task 1 throughout this project.
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  insert_only: true
+  max_steps: 80
+insert_xy_jitter: 0.02
+insert_tilt_jitter_deg: 5.0
+insert_start_depth_curriculum: true
+insert_start_depth_frac: 0.5
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

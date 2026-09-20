@@ -1,0 +1,11 @@
+pybullet build time: Nov 28 2023 23:45:17
+  ep 0: 400 steps, total so far 400
+  ep 25: 400 steps, total so far 10026
+  ep 50: 400 steps, total so far 20026
+  ep 75: 400 steps, total so far 29191
+  ep 100: 400 steps, total so far 38806
+  ep 125: 400 steps, total so far 48193
+  ep 150: 400 steps, total so far 57651
+  ep 175: 400 steps, total so far 66648
+[collect] 76011 transitions from 200 episodes -> runs/dynamics_transitions_full4.npz
+[collect] obs_dim=123 action_dim=8 done_rate=0.000

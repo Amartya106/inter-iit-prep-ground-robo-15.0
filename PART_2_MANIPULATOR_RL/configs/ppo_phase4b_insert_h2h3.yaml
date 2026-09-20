@@ -1,0 +1,75 @@
+# Phase 4 -- E73, the combined-fix plan's first test (parsed-plotting-allen.md).
+#
+# Task 2 (insert_only): every episode starts already grasped + xy/tilt-
+# aligned directly in the insertion zone (env._start_pre_inserted,
+# cfg.insert_only) -- only the final push-through is left to learn.
+# max_steps=80 (not 400) since there's no reach/grasp/transit leg to cover.
+# Historical precedent WITHOUT any of tonight's fixes: E33
+# (configs/ppo_phase4b_insert.yaml, runs/phase4_task2_insert) scored
+# 0.025/depth 0.00314 -- "first nonzero result in a formal eval anywhere in
+# Phase 4's history". This config is the same task with three things E33
+# never had:
+#
+#   1. H2 (manipularl/env.py peg_depth_shaped, manipularl/rewards.py's
+#      depth-progress gate): the reward used to pay EXACTLY NOTHING for the
+#      peg's first 4cm of real insertion (centre-based depth on an 8cm
+#      peg). Now tracks the TIP. Verified numerically against a live
+#      trajectory (depth_shaped == depth + 0.0400 exactly). Unconditional
+#      behavior in manipularl/, already active for insert_only -- no config
+#      flag needed.
+#   2. H3 (manipularl/env.py _assemble_obs): 8 new observation dims --
+#      peg_tilt_rad, min_ring_dist, peg_depth_shaped, a peg-tip-to-hole
+#      vector, and peg-vs-ring contact (flag + clipped force) -- quantities
+#      the reward already used but the policy could never see. Also
+#      unconditional, already active.
+#   3. Warm-started via WEIGHT-SURGERY (--warm-start-pad, train.py), not
+#      from scratch. H3's 8 new obs dims (123->131/frame) break a normal
+#      --warm-start (shape mismatch) -- every H2+H3 test run tonight was
+#      forced from scratch as a result, discarding Phase 3's competent arm.
+#      warm_start_pad() instead builds a fresh model at this task's own
+#      width and copies runs/phase3_ppo_best's weights in wherever shapes
+#      still agree, zero-initialising only the 24 new (8 dims x 3 frames)
+#      columns -- verified (torch.allclose, exact 0.0 difference over 20
+#      random trials) to be function-IDENTICAL to the old model at step 0,
+#      not an approximation of it.
+#   4. LogStdBandClamp (--log-std-min/--log-std-max), not a guessed
+#      ent_coef. Tonight's two ent_coef attempts failed in opposite
+#      directions (0.0: gripper collapsed permanently; 0.003, two seeds:
+#      never discovered grasping at all) -- a single scalar can't guarantee
+#      neither failure. This clamps std into [0.3, 2.0] every step
+#      regardless of ent_coef, mechanically incapable of reproducing either.
+#
+#   python train.py --config configs/ppo_phase4b_insert_h2h3.yaml \
+#     --warm-start-pad runs/phase3_ppo_best/model.zip \
+#     --log-std-min 0.3 --log-std-max 2.0 \
+#     --out-dir runs/phase4b_insert_h2h3
+#
+# Decision gate: full checkpoint sweep (not final model), evaluate.py
+# --phase 4 --episodes 200. Compare against tonight's floor (success
+# 0.01-0.02 / depth 0.001, present on 44/44 prior formally-swept
+# checkpoints across every H1/H2+H3 attempt) and against E33's own
+# 0.025/0.00314. Depth clearing meaningfully past 0.001 is the bar --
+# success alone is a known floor effect (E63).
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  insert_only: true
+  max_steps: 80
+insert_start_depth_curriculum: true
+insert_start_depth_frac: 0.5
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

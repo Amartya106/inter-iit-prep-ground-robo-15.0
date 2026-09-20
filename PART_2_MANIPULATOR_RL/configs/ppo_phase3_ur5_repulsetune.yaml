@@ -1,0 +1,44 @@
+# Phase 3 -- Obstacle-Aware, UR5 (6-DOF) port. Repulsion-weight tune, on top
+# of the 5M-step run that fixed the gripper-link obstacle-shaping blind spot
+# (ppo_phase3_ur5_longer.yaml: success=0.125, collision=0.750 -- collision
+# rate never moved off ~0.75-0.84 across the whole run despite the fix).
+# Only reward-shaping change: manipularl_ur5/env.py now patches
+# manipularl.rewards's module-level repulsion constants at import time
+# (UR5-process-only, manipularl/rewards.py itself stays byte-for-byte
+# unmodified -- KUKA is unaffected, verified via a fresh-interpreter check):
+#   _REPULSE_MARGIN   0.12 -> 0.16
+#   _REPULSE_W_FREE   0.5  -> 1.0
+#   _REPULSE_W_CARRY  1.0  -> 2.5
+# KUKA's own E21-E23 sweep found repulsion weight (0.1-0.75 free / 1.0-1.5
+# carry) was NOT the sensitive parameter there (collision stayed in a
+# 0.20-0.25 band regardless of weight). UR5's collision rate (0.75-0.84) is
+# far outside that whole band, so this pushes meaningfully past every value
+# KUKA ever tried, on the hypothesis that UR5's gripper-offset geometry
+# needs stronger/earlier pushback than rewards.py's KUKA-tuned defaults
+# provide. Hyperparameters/curricula otherwise identical to
+# ppo_phase3_ur5_longer.yaml (5.0M steps). Warm-started from
+# runs/phase2_ppo_ur5_longer (same source as every Phase 3 attempt so far).
+phase: 3
+algo: ppo
+n_envs: 16
+frame_stack: 3
+grasp_curriculum: 0.35
+anneal_grasp_curriculum: true
+anneal_frac: 0.5
+obstacle_curriculum: true
+obstacle_curriculum_start: [0, 1]
+obstacle_curriculum_frac: 0.5
+total_timesteps: 5000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

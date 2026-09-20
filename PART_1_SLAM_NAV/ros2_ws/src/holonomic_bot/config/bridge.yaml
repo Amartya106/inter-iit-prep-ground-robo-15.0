@@ -1,0 +1,65 @@
+# ros_gz_bridge parameter-bridge config for holonomic_bot (ROS 2 Jazzy + Gazebo Harmonic)
+#
+# The gz-side topic names below were verified empirically against the running
+# model (`gz topic -l` after spawning models/holonomic_bot/model.sdf):
+#
+#   plugin <topic>cmd_vel</topic>        -> gz topic  /cmd_vel
+#   plugin <odom_topic>odometry</...>    -> gz topic  /odometry
+#   plugin <tf_topic>pose_tf</tf_topic>  -> gz topic  /pose_tf   (NOT bridged, see below)
+#   lidar  <topic>/model/holonomic_bot/scan</topic>
+#   imu    <topic>/model/holonomic_bot/imu</topic>
+#   joint-state-publisher plugin         -> gz topic  /joint_states
+#
+# The original repo file pointed cmd_vel/odometry at /model/holonomic_bot/*,
+# which the model never publishes/subscribes -- that is why the robot did not
+# move and no odometry appeared. It also had no IMU entry despite the SDF
+# publishing one, and bridged pose_tf straight onto /tf.
+#
+# We deliberately do NOT bridge /pose_tf onto /tf. The robot_localization EKF
+# (see holonomic_nav/config/ekf.yaml) is the single authority for the
+# odom -> base_link transform; two publishers of the same transform silently
+# corrupts the TF tree. Raw wheel odometry is bridged to /odom/wheel and fed
+# into the EKF as one input instead.
+
+# ---------------- CMD_VEL (ROS -> GZ) ----------------
+- ros_topic_name: "/cmd_vel"
+  gz_topic_name: "/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "gz.msgs.Twist"
+  direction: ROS_TO_GZ
+
+# ---------------- RAW WHEEL ODOMETRY (GZ -> ROS) ----------------
+# Consumed by the EKF as odom0. Not used directly as /odom.
+- ros_topic_name: "/odom/wheel"
+  gz_topic_name: "/odometry"
+  ros_type_name: "nav_msgs/msg/Odometry"
+  gz_type_name: "gz.msgs.Odometry"
+  direction: GZ_TO_ROS
+
+# ---------------- 2D LIDAR (GZ -> ROS) ----------------
+- ros_topic_name: "/scan"
+  gz_topic_name: "/model/holonomic_bot/scan"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
+# ---------------- IMU (GZ -> ROS) ----------------
+- ros_topic_name: "/imu"
+  gz_topic_name: "/model/holonomic_bot/imu"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS
+
+# ---------------- JOINT STATES (GZ -> ROS) ----------------
+- ros_topic_name: "/joint_states"
+  gz_topic_name: "/joint_states"
+  ros_type_name: "sensor_msgs/msg/JointState"
+  gz_type_name: "gz.msgs.Model"
+  direction: GZ_TO_ROS
+
+# ---------------- CLOCK (GZ -> ROS) ----------------
+- ros_topic_name: "/clock"
+  gz_topic_name: "/clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock"
+  direction: GZ_TO_ROS

@@ -1,0 +1,69 @@
+# Phase 4 -- E75, Task 1 (align_only) retrain with the combined-fix recipe
+# (parsed-plotting-allen.md), the specialist-team plan's missing piece.
+#
+# Align is the one sub-task that has NEVER succeeded once in this entire
+# project: E31-E45 (11 attempts, every lever tried -- grasp curricula,
+# _GRASP_OFFSET_Z exemption, drop penalties, jitter penalties, settle
+# bonuses, linger penalties, GAIL) all landed at 0/200. E41 (v6, this
+# config's un-fixed ancestor) is the standing-best Task 1 result on
+# collision (0.30) but still 0/200 on success. The diagnosed failure mode
+# throughout: grasp-flicker (GRASP->DROP->GRASP->DROP every 1-2 steps, one
+# episode logged 289 failed attempts) and, once that was damped
+# (_GRASP_DROP_PEN, E40), "grasp-commitment aversion" -- a new problem, not
+# a fix. Never diagnosed as an exploration-noise problem specifically, but
+# every one of those 11 attempts inherited the SAME unmanaged, unreset
+# log_std this whole night's H1 investigation found ratcheting through the
+# phase2->3->4 warm-start chain -- so grasp-flicker (rapid, seemingly
+# undirected toggling of a single binary-ish action dimension) is exactly
+# the SYMPTOM H1 predicts on a dimension whose exploration noise was never
+# managed.
+#
+# Same combined recipe as E73 (Task 2's own real result, 0.040/0.004, the
+# best formally-evaluated number of the whole investigation): --warm-
+# start-pad from phase3_ppo_best (verified function-preserving surgery,
+# exact 0.0 difference over 20 random trials) instead of E31-E45's plain
+# --warm-start (which, pre-H3, didn't even need padding -- but couldn't be
+# reused here regardless, since H3 widened the observation this env now
+# produces); H2 (tip-based peg_depth_shaped -- inert for align_only itself,
+# which has no depth term, but shared-file changes are unconditional) and
+# H3 (8 richer obs dims, including peg_tilt_rad and the peg-tip-to-hole
+# vector -- DIRECTLY relevant here, since align_only's own success gate is
+# xy+tilt, and tilt was never separately observable before tonight)
+# already unconditional in manipularl/env.py/rewards.py; LogStdBandClamp
+# (std in [0.3, 2.0]) instead of an unmanaged/guessed exploration schedule.
+#
+# Deliberately kept as close to E73's own clean recipe as possible -- no
+# grasp_curriculum, no settle/linger/drop-penalty knobs from the historical
+# E31-E45 series. If this partially works but still shows flicker, that
+# itself is useful diagnostic information for a targeted follow-up, rather
+# than something to preemptively patch before a first clean read.
+#
+#   python train.py --config configs/ppo_phase4a_align_h2h3.yaml \
+#     --warm-start-pad runs/phase3_ppo_best/model.zip \
+#     --log-std-min 0.3 --log-std-max 2.0 \
+#     --out-dir runs/phase4a_align_h2h3
+#
+# Decision gate: full checkpoint sweep, evaluate.py --phase 4 --algo ppo
+# --align-only --episodes 200. Compare against 0/200 on EVERY one of
+# E31-E45's eleven prior attempts. Any nonzero success here is a first for
+# this sub-task in the project's history.
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  align_only: true
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

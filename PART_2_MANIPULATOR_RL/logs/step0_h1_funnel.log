@@ -1,0 +1,67 @@
+pybullet build time: Nov 28 2023 23:45:17
+[step0] loading runs/phase4_full_dream/model.zip on cuda
+[step0] inherited per-dim std: [1.8300000429153442, 0.3100000023841858, 5.480000019073486, 0.6000000238418579, 33.38999938964844, 15.510000228881836, 32.650001525878906, 0.25]
+  [deterministic] 50/200 success=0.020 align_ok=0.120 enter_ok=0.040
+  [deterministic] 100/200 success=0.010 align_ok=0.140 enter_ok=0.040
+  [deterministic] 150/200 success=0.020 align_ok=0.133 enter_ok=0.053
+  [deterministic] 200/200 success=0.015 align_ok=0.135 enter_ok=0.045
+
+======================================================================
+FUNNEL -- deterministic  (N=200)
+======================================================================
+  success   : 0.0150  (3/200)
+  collided  : 0.440
+  grasp_ok                               0.700   (conditional 0.700)
+  align_ok (xy<10mm above mouth)         0.135   (conditional 0.193)
+  enter_ok (depth>5mm)                   0.045   (conditional 0.333)
+  depth_ok (>=3cm)                       0.045   (conditional 1.000)
+  success                                0.015   (conditional 0.333)
+  frac steps all-arm |a|<0.2 (0b) : 0.0000
+  EE per-step displacement (cm)   : mean=2.52 median=2.61 p10=0.69 (insert_xy_tol=1.0cm, bore clearance~0.3cm)
+  of 3 successes, grasped=True at success: 0/3
+  [stochastic_inherited] 50/200 success=0.020 align_ok=0.100 enter_ok=0.040
+  [stochastic_inherited] 100/200 success=0.010 align_ok=0.130 enter_ok=0.040
+  [stochastic_inherited] 150/200 success=0.020 align_ok=0.113 enter_ok=0.053
+  [stochastic_inherited] 200/200 success=0.015 align_ok=0.105 enter_ok=0.045
+
+======================================================================
+FUNNEL -- stochastic_inherited  (N=200)
+======================================================================
+  success   : 0.0150  (3/200)
+  collided  : 0.550
+  grasp_ok                               0.710   (conditional 0.710)
+  align_ok (xy<10mm above mouth)         0.105   (conditional 0.148)
+  enter_ok (depth>5mm)                   0.045   (conditional 0.429)
+  depth_ok (>=3cm)                       0.045   (conditional 1.000)
+  success                                0.015   (conditional 0.333)
+  frac steps all-arm |a|<0.2 (0b) : 0.0000
+  EE per-step displacement (cm)   : mean=2.47 median=2.48 p10=0.67 (insert_xy_tol=1.0cm, bore clearance~0.3cm)
+  of 3 successes, grasped=True at success: 0/3
+  [stochastic_clamped] 50/200 success=0.020 align_ok=0.140 enter_ok=0.040
+  [stochastic_clamped] 100/200 success=0.010 align_ok=0.110 enter_ok=0.040
+  [stochastic_clamped] 150/200 success=0.020 align_ok=0.127 enter_ok=0.060
+  [stochastic_clamped] 200/200 success=0.015 align_ok=0.120 enter_ok=0.050
+
+======================================================================
+FUNNEL -- stochastic_clamped  (N=200)
+======================================================================
+  success   : 0.0150  (3/200)
+  collided  : 0.420
+  grasp_ok                               0.735   (conditional 0.735)
+  align_ok (xy<10mm above mouth)         0.120   (conditional 0.163)
+  enter_ok (depth>5mm)                   0.050   (conditional 0.417)
+  depth_ok (>=3cm)                       0.045   (conditional 0.900)
+  success                                0.015   (conditional 0.333)
+  frac steps all-arm |a|<0.2 (0b) : 0.0000
+  EE per-step displacement (cm)   : mean=2.50 median=2.61 p10=0.59 (insert_xy_tol=1.0cm, bore clearance~0.3cm)
+  of 3 successes, grasped=True at success: 0/3
+
+======================================================================
+SUMMARY (0a decision)
+======================================================================
+  deterministic            success=0.015 align_ok=0.135 enter_ok=0.045 sat_frac=0.0000
+  stochastic_inherited     success=0.015 align_ok=0.105 enter_ok=0.045 sat_frac=0.0000
+  stochastic_clamped       success=0.015 align_ok=0.120 enter_ok=0.050 sat_frac=0.0000
+[step0] wrote results/step0_h1_funnel.json
+
+ALL_DONE

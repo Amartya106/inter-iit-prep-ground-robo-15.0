@@ -1,0 +1,144 @@
+# Phase 4 -- E70, the H1-isolated retrain (plan: parsed-plotting-allen.md).
+#
+# 69 prior Phase 4 experiments (E1-E69, see EXPERIMENTS.md) all inherited
+# PPO's action-noise log_std verbatim through the phase1->2->3->4 warm-start
+# chain, never reset. Measured directly from the saved checkpoints
+# (exp(policy.log_std), per action dimension):
+#
+#   phase2_ppo          mean=1.06   j4/j5/j6 (wrist) = 1.35 / 1.16 / 1.23
+#   phase3_ppo_best      mean=3.29   j4/j5/j6 (wrist) = 7.66 / 4.51 / 8.20
+#   phase4_full_dream    mean=11.25  j4/j5/j6 (wrist) = 33.4 / 15.5 / 32.7   <- this run's warm-start source's descendant, E51, standing-best Phase 4
+#   phase4_stage3_fixedenv mean=42.0 j4/j5/j6 (wrist) = 134 / 61.8 / 119    <- E57, flagged "std=42" as an unrelated confound at the time
+#
+# j4/j5/j6 are the wrist -- the joints that set peg orientation, which must
+# hold to a few degrees for a 1.5cm peg to enter an 1.8cm bore. Nothing in
+# phases 1-3's reward ever references peg orientation, so entropy's gradient
+# on log_std (a constant +1/dim, unopposed) ran for ~8M cumulative steps
+# before Phase 4 -- the first phase it matters -- ever gave the wrist a
+# reason to tighten back up. Verified this is the actual mechanism, not
+# coincidence: E57's own logged entropy_loss (-23.2) reconstructs exactly
+# from its per-dim std table via H = sum(log std_i) + 8*0.5*ln(2*pi*e)
+# = 11.875 + 11.351 = 23.226.
+#
+# STEP 0 diagnostic (results/step0_h1_funnel.json, this session, no
+# training): loaded E51 and ran its own funnel (grasp_ok/align_ok/enter_ok/
+# depth_ok/success) under three action regimes -- deterministic, stochastic
+# at the inherited std, and stochastic with log_std CLAMPED to -3.0
+# (std~=0.05) on an OTHERWISE UNCHANGED checkpoint. All three landed within
+# noise of each other (align_ok 0.105-0.135, enter_ok 0.045-0.050, success
+# flat 0.015), and a near-hole-only refinement (grasped + within 5cm of
+# hole_xy, 900-2000 qualifying steps per arm) confirmed it: median EE
+# displacement near the hole stayed ~2.8-3.1cm in EVERY regime including the
+# clamped one, vs the 1cm insert_xy_tol / ~0.3cm bore clearance that
+# actually matters there. Conclusion: on an ALREADY-TRAINED checkpoint,
+# clamping noise alone does not recover precision -- the policy's MEAN
+# action near the target was itself never shaped toward precision, which is
+# the expected downstream consequence of training-time samples in that
+# precision regime being vanishingly rare (the plan's own saturation
+# calculation: ~0.002 sub-cm full-arm motions expected over a 4M-step run at
+# std~=3.3). This was the plan's own anticipated contingency ("if all three
+# are identical ... requires retraining, not clamping, to repair") --
+# this config is that retrain, not a second inference-time patch.
+#
+# Single variable vs E51 (runs/phase4_full_dream): the inherited exploration
+# distribution. Same warm-start source (runs/phase3_ppo_best), same
+# hyperparameters, same reward/env/observations/curricula, NO dreaming
+# (E52/E53 showed more dreaming erases E51's own depth gain, so it stays out
+# here to keep this a clean, single-variable comparison). Launch with:
+#
+#   python train.py --config configs/ppo_phase4_logstdreset.yaml \
+#     --warm-start runs/phase3_ppo_best/model.zip \
+#     --reset-log-std 0.5 --reset-log-std-dims 4,5,6 0.2 \
+#     --ent-coef 0.0 --out-dir runs/phase4_ppo_logstdreset
+#
+# --reset-log-std 0.5: bring the 5 non-wrist arm dims + gripper back to a
+#   healthy std~=1.65 (log 0.5 was chosen slightly above phase2's own
+#   healthy ~1.0 baseline, erring toward more exploration rather than less,
+#   since this is still a genuinely new sub-task for those dims too).
+# --reset-log-std-dims 4,5,6 0.2: wrist dims specifically to std~=1.22,
+#   applied AFTER the blanket reset above (train.py's own documented order),
+#   closer to phase2's healthy baseline than the blanket value since the
+#   wrist is exactly the dimension whose noise this whole diagnosis is
+#   about.
+# --ent-coef 0.003: the entropy bonus that re-inflates log_std even after a
+#   one-time reset (see the mechanism above) -- ent_coef=0.01 has been
+#   silently inherited, unopposed, through every prior Phase 4 run (the
+#   hyperparams: block below is NOT read on warm-start, train.py:161-186;
+#   listed here for documentation only -- the CLI flag is what actually
+#   takes effect this run).
+#   REVISED after a first attempt at ent_coef=0.0 (killed at 573k/2.5M
+#   steps): success climbed to a real 0.07-0.08 / depth 0.0042-0.0048
+#   between steps 75k-110k (would have beaten every prior KUKA Phase 4
+#   number), then grasp_failure_rate collapsed to a hard 1.000 (zero grasp
+#   attempts ever succeed) and stayed there for 446k steps with no sign of
+#   recovery -- ent_coef=0.0 removes the ONLY force that pulls a collapsed
+#   action distribution back open, and with no counter-pressure the
+#   gripper's action mean drifted past _GRASP_THRESH and had nothing to
+#   pull it back (this coincided with the value net still recalibrating,
+#   explained_variance strongly negative in that window -- plausibly a
+#   noisy gradient update during that period is what pushed it there).
+#   0.003 is a real, grounded value from this codebase's own history (Phase
+#   2's E6 used exactly this transitioning from 0.003), chosen to keep
+#   enough entropy pressure to prevent a repeat collapse while still being
+#   far below the 0.01 that drove the original wrist ratchet.
+# No target_kl override this run: E67 already showed the guard works but
+# only limits further drift, not the starting point this run explicitly
+# resets -- since std starts healthy here, the guard is a defense against a
+# NEW instability this specific change might introduce, not a fix for the
+# original ratchet. Worth adding on a follow-up if approx_kl misbehaves.
+#
+# Decision gate (per plan): report the E55 funnel (align_ok, enter_ok |
+# align_ok), not just success_rate -- success is a floor effect at this
+# ceiling (E63). Target: enter_ok | align_ok above KUKA's flat 0.059-0.180
+# band (every oracle/RL measurement in the project's history, E55-E69).
+#
+# ROUND 2 (--soft-warm-start added, this attempt): ent_coef=0.003 replicated
+# a clean null across BOTH seed=0 and seed=1 (22/22 checkpoints, two
+# independent full checkpoint sweeps, zero deviation from the background
+# floor -- ruled out as seed luck). Contrast: ent_coef=0.0 (seed=0, killed
+# at 573k) DID find real skill (success 0.07-0.08, depth 0.0042-0.0048,
+# steps 75k-110k) before an unopposed collapse. Working hypothesis for why
+# 0.003 never even finds it: the value net was NOT reset in either 0.003
+# attempt (deliberately, to isolate log_std as the only variable) -- it's
+# still calibrated to phase3_ppo_best's much-higher-variance action
+# distribution, so its advantage estimates are systematically wrong
+# immediately after the log_std surgery, and a small but nonzero entropy
+# bonus may be enough to keep the (now precision-shaped) gripper action
+# oscillating around the decision boundary indefinitely rather than ever
+# committing, while a stale, poorly-calibrated critic never produces a
+# clean enough advantage signal to break the tie.
+# --soft-warm-start (train.py, pre-existing) reinits the value net +
+# optimiser and ALSO sets log_std -- but its own log_std (soft_log_std,
+# default -0.7) is applied BEFORE --reset-log-std/--reset-log-std-dims in
+# train.py's own ordering, so passing all three together still lands on
+# EXACTLY this run's own targeted std (wrist~=1.22, rest~=1.65) -- the only
+# new variable this round is the value-net/optimiser reset, isolating the
+# stale-critic hypothesis cleanly rather than confounding it with a second
+# ent_coef change. ent_coef stays 0.003 (unchanged) and seed=0 (unchanged,
+# for direct comparison against the very first attempt at this exact seed).
+#
+#   python train.py --config configs/ppo_phase4_logstdreset.yaml \
+#     --warm-start runs/phase3_ppo_best/model.zip --soft-warm-start \
+#     --reset-log-std 0.5 --reset-log-std-dims 4,5,6 0.2 \
+#     --ent-coef 0.003 --seed 0 --out-dir runs/phase4_ppo_logstdreset_softws
+phase: 4
+algo: ppo
+n_envs: 8
+frame_stack: 3
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.003   # NOT read on warm-start (train.py) -- the --ent-coef
+                  # 0.003 CLI flag is what actually applies this run; kept
+                  # here so the intent isn't hidden and this config is
+                  # self-consistent if ever used from scratch instead.
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

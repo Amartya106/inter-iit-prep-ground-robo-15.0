@@ -1,0 +1,20 @@
+pybullet build time: Nov 28 2023 23:45:17
+  50/800 episodes, 28 success, 1670 transitions kept
+  100/800 episodes, 55 success, 3423 transitions kept
+  150/800 episodes, 90 success, 5249 transitions kept
+  200/800 episodes, 118 success, 6974 transitions kept
+  250/800 episodes, 145 success, 8641 transitions kept
+  300/800 episodes, 170 success, 10146 transitions kept
+  350/800 episodes, 200 success, 11742 transitions kept
+  400/800 episodes, 229 success, 13574 transitions kept
+  450/800 episodes, 253 success, 14702 transitions kept
+  500/800 episodes, 279 success, 16204 transitions kept
+  550/800 episodes, 303 success, 17446 transitions kept
+  600/800 episodes, 336 success, 19515 transitions kept
+  650/800 episodes, 361 success, 21082 transitions kept
+  700/800 episodes, 390 success, 22647 transitions kept
+  750/800 episodes, 415 success, 24140 transitions kept
+  800/800 episodes, 438 success, 25628 transitions kept
+
+[collect] scripted expert 438/800 = 55% success
+[collect] kept 25628 transitions (obs dim 369) -> runs/demos_phase3/demos.npz

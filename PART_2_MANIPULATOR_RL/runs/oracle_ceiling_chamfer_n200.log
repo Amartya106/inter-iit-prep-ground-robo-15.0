@@ -1,0 +1,48 @@
+pybullet build time: Nov 28 2023 23:45:17
+  25/200  success=0.000  depth_ok=0.000
+  50/200  success=0.020  depth_ok=0.020
+  75/200  success=0.013  depth_ok=0.013
+  100/200  success=0.020  depth_ok=0.030
+  125/200  success=0.024  depth_ok=0.032
+  150/200  success=0.027  depth_ok=0.033
+  175/200  success=0.023  depth_ok=0.029
+  200/200  success=0.020  depth_ok=0.025
+
+==================================================================
+ORACLE CEILING -- phase 4, eval split, N=200
+privileged scripted IK expert (scripts/scripted_expert.py)
+==================================================================
+
+OVERALL
+  success        : 0.0200   (4/200)
+  collided       : 0.205
+  mean steps     : 324.1
+
+FUNNEL (fraction of ALL 200 episodes reaching each stage)
+  grasp_ok  peg ever picked up                   0.635   (conditional 0.635)
+  align_ok  above mouth, xy < 10mm               0.535   (conditional 0.843)
+  enter_ok  peg centre >5mm past mouth           0.030   (conditional 0.056)
+  depth_ok  reached 30mm depth                   0.025   (conditional 0.833)
+  success   + tilt, held 10 steps, no collision  0.020   (conditional 0.800)
+
+EXPERT STATE MACHINE (its own final state)
+  DESCEND        64  (32.0%)
+  ALIGN          59  (29.5%)
+  INSERT         58  (29.0%)
+  GRASP          13  (6.5%)
+  APPROACH        6  (3.0%)
+  ever entered INSERT (its own xy<3.5mm gate fired): 0.290
+
+PRECISION (of 127 grasped episodes)
+  min xy_err while grasped       mean=2.97cm  median=0.29cm  best=0.02cm
+  min xy_err while above mouth   mean=1.37cm  median=0.28cm  best=0.02cm
+  max_depth                      mean=0.04cm  median=0.00cm  best=3.14cm
+
+WHY THE DESCENT STALLS
+  episodes with peg-vs-hole-ring contact: 98/200 (49.0%)
+    xy_err at FIRST ring contact: mean=3.89cm  median=3.68cm  best=0.15cm
+    steps in ring contact:        mean=133.5  median=85.5  worst=400
+  peg-TIP height at max depth: mean=1.08cm  median=-0.00cm  lowest=-0.01cm
+    (mouth plane is at z=10.00cm; tip must reach z=3.00cm for success)
+
+[oracle] per-episode rows -> runs/oracle_chamfer_n200.json

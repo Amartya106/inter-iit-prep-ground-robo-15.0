@@ -1,0 +1,44 @@
+# Phase 4 -- Task 1b/"descend", replay-seeded curriculum (Part 1 of my
+# "generate dreams and train on those" plan). On top of the
+# height-curriculum'd descend_only base (see ppo_phase4c_descend_jitter*.yaml):
+# 30% of TRAIN episodes now start from an EXACT recorded state from a real,
+# proven-successful E33 rollout (scripts/extract_replay_trajectory.py,
+# runs/replay_trajectory_e33.npz -- best of 40 attempts, reached 3.36cm real
+# depth) instead of a randomized airspace height. No IK involved on replay --
+# these are literal recorded joint angles from a real rollout, replayed via
+# env._start_from_replay(), zero convergence risk. The remaining 70% still
+# use the randomized-height airspace curriculum so general coverage isn't
+# lost to only ever seeing this one trajectory's region.
+#
+# arm_jitter_pen_w = 2x default (0.06) -- matches the only variant in the
+# parallel 1.5x/2x/2.5x sweep to show a nonzero success_rate/insert_depth_mean
+# signal so far (0.01 success, first nonzero result in the whole descend_only
+# effort, at ~46% through that sweep).
+#
+# Warm-started from runs/phase3_ppo_best, same as the rest of this batch.
+phase: 4
+algo: ppo
+n_envs: 8
+frame_stack: 3
+cfg_overrides:
+  descend_only: true
+  max_steps: 150
+arm_jitter_pen_w: 0.06
+airspace_height_curriculum: true
+airspace_height_anneal_frac: 0.5
+replay_path: runs/replay_trajectory_e33.npz
+replay_curriculum: 0.3
+total_timesteps: 2000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

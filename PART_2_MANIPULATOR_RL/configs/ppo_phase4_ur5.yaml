@@ -1,0 +1,30 @@
+# Phase 4 -- Peg-in-Hole Insertion, UR5 (6-DOF) port. The full monolithic task
+# (reach -> grasp -> transit -> align -> insert, cold-start, max_steps=400),
+# warm-started from Phase 3. NOT using model-based dreaming this run -- E51's
+# KUKA dreaming setup depends on a pretrained dynamics model
+# (runs/dynamics_model_full4.pt) fit to KUKA's own obs/action shapes, which
+# doesn't exist for this 6-DOF action/observation space; training one first
+# is a separate follow-up, not blocking this baseline attempt. Given E69's
+# oracle result (13% success on this exact task's privileged expert, vs
+# KUKA's flat ~2% ceiling across the whole project), this plain baseline is
+# the right first thing to see, before any additional machinery.
+# Hyperparameters otherwise identical to KUKA's own Phase 4 configs
+# (ppo_phase4_full_dream.yaml minus the dream_* keys).
+phase: 4
+algo: ppo
+n_envs: 16
+frame_stack: 3
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

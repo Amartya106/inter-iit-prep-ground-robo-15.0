@@ -1,0 +1,57 @@
+# Phase 4 -- R6 extension, 2.5M -> 5.0M steps.
+#
+# R6 (configs/ppo_phase4_r6_insertonly_hole24.yaml) finished its original
+# 2.5M-step budget with a plateau (750k-2.5M, 8 checkpoints) of mean 0.0725,
+# std 0.0282 -- essentially identical to R5's own 0.073/0.024 (see
+# EXPERIMENTS.md's "R6: does a rounder bore ring help insertion? Clean
+# null." entry). The last 4 checkpoints (1.75M-2.5M: 0.07, 0.08, 0.04, 0.08)
+# were flat, not climbing -- there was no sign this needed more steps to
+# resolve. Extending anyway, per direct instruction, to get more data and
+# rule out "it just needed longer" before calling the null final.
+#
+# Plain --warm-start (not --warm-start-pad): hole_segments=24 doesn't touch
+# observation width (that's H3's territory, unrelated), so the saved
+# model.zip already matches this env's observation space exactly -- no
+# surgery needed, PPO.load() restores full state (policy, optimizer,
+# hyperparameters) verbatim. cfg_overrides/curriculum flags below still
+# have to be respecified: they feed env/train.py construction directly,
+# not the loaded model.
+#
+# Caveat, disclosed: SB3's model.learn(total_timesteps=N, env=...) via
+# --warm-start resets reset_num_timesteps to its default (True), so this
+# run's OWN checkpoint numbering restarts from 0, not 2,500,608 --
+# checkpoint "model_<K>_steps.zip" here really means REAL step 2,500,608+K.
+# Also means insert_start_depth_curriculum re-anneals over this run's own
+# first 50%, even though the original run's curriculum had already finished
+# by 750k -- harmless for eval numbers (eval always forces the real depth=0
+# case regardless of training curriculum state, per env.py), but expect the
+# same kind of early-checkpoint noise R5/R6 both showed in their own first
+# few hundred-k steps, for the same reason.
+#
+#   MANIPULARL_TORCH_THREADS=8 .venv_gpu_test/bin/python train.py \
+#     --config configs/ppo_phase4_r6_insertonly_hole24_ext.yaml \
+#     --warm-start runs/phase4_r6_insertonly_hole24/model.zip \
+#     --warm-start-norm runs/phase4_r6_insertonly_hole24/vecnormalize.pkl \
+#     --seed 0 --out-dir runs/phase4_r6_insertonly_hole24_ext \
+#     > logs/phase4_r6_insertonly_hole24_ext.log 2>&1
+#
+# Decision gate: same checkpoint-sweep methodology as R6/R5. Compute this
+# extension's own plateau mean/std and compare against R6's original
+# 0.0725/0.0282 (and R5's 0.073/0.024) -- a real climb changes the
+# conclusion, more of the same flat noise confirms it.
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  insert_only: true
+  max_steps: 80
+  num_obstacles: 0
+  obstacle_min: 0
+  obstacle_max: 0
+  hole_segments: 24
+insert_start_depth_curriculum: true
+insert_start_depth_frac: 0.5
+satisficing_proximity: true
+risk_seeking_depth: true
+total_timesteps: 2500000

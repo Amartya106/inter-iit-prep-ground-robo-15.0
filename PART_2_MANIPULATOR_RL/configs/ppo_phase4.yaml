@@ -1,0 +1,47 @@
+# Phase 4 - Peg-in-Hole.  PPO primary workhorse (this CPU's TQC grad-step cost
+# made a full off-policy curriculum infeasible in the time budget).
+#
+# Track-A pass v1 (baseline eval 0.015, insert_depth ~= 0): the policy almost
+# never gets the held peg centred above the mouth from a cold reach+grasp+
+# carry start, so the descend/insert/hold leg is never practiced. Added:
+#   - pre-aligned start curriculum (env._start_pre_aligned, 0.6 -> 0 over 50%
+#     of training) -- mirrors the Phase-2 grasp curriculum one stage further
+#     down the task chain, bootstrapping insert/hold before transit+align.
+#   - widened (shaping-only) insertion-depth gate + loosened align-bonus gate
+#     in rewards.py, so the "+depth" gradient isn't a hard cliff at ~3.5mm xy
+#     error (env.py peg_depth_shaped; success predicate itself is unchanged).
+# v1 result: eval STILL 0.015/depth~=0, but collision 0.42->0.26. A targeted
+# diagnostic on the trained v1 policy (40 cold-start eps) found the real
+# bottleneck: 89% of grasped episodes get the peg within 10cm of the hole,
+# best case 0.1cm -- transit+align is fine -- yet max_depth was EXACTLY 0.00cm
+# in every single episode. The policy learns to hover aligned, never commits
+# to the final push-down: the continuous potential's "+2.0*depth" gradient is
+# too weak against the shaped -1.5*xy_err/-0.5*tilt cost of a tilt/xy-
+# disrupting rim contact during a real insertion attempt (tight ~3mm bore
+# clearance -- the scripted expert bounced off the same rim in Track B).
+# v2 (this pass) adds:
+#   - _DEPTH_PROGRESS_BONUS (rewards.py): a discrete, monotonic +1/cm bonus
+#     for each NEW cm of real max depth reached (capped ~5cm) -- makes
+#     committing to depth pay off regardless of per-step shaping noise,
+#     same pattern as _CARRY_CHECKPOINT_BONUS for the pick_place leg.
+phase: 4
+algo: ppo
+n_envs: 16
+frame_stack: 3
+align_curriculum: 0.6
+anneal_align_curriculum: true
+align_anneal_frac: 0.5
+total_timesteps: 4000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

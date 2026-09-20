@@ -1,0 +1,83 @@
+# Phase 4 -- Stage 3 retrain, the FIXED-ENV track (E55/E56's diagnosis-driven
+# follow-up to E51, the standing-best full monolithic Phase 4 result).
+#
+# IMPORTANT -- this is a SEPARATE, LABELLED track, not a replacement for the
+# frozen-env numbers (E1-E54). EXPERIMENTS.md's own preamble states geometry
+# and _success() were never modified across those runs; this config is the
+# first exception, made deliberately and disclosed, after measuring (E55) that
+# the environment's own privileged oracle scores the same ~2% every trained
+# policy topped out at -- the learner was never the bottleneck, so no amount
+# of further reward/curriculum tuning on the FROZEN env was going to move
+# this. Stage 1's oracle ablation (E56) was honest: none of the four
+# individually-tested env fixes moved the ORACLE's own number, and the real
+# explanation (peg tilt, not xy precision, blocking entry) turned out to be
+# something a scripted solve-once-then-freeze IK controller structurally
+# cannot fix, but a continuously reward-trained policy plausibly can. This
+# run tests that directly, rather than concluding from the oracle alone.
+#
+# cfg_overrides, each independently oracle-validated as non-regressive
+# (E56, N=100 apples-to-apples) even though none was individually decisive:
+#   hole_chamfer: true          -- funnel lead-in above the bore (env._place_chamfer)
+#   grasp_max_force: 15.0       -- compliant grasp (peg weight 0.49N; this is
+#                                  well above that for normal carry, but finite
+#                                  rather than PyBullet's effectively-infinite
+#                                  default, letting the peg self-centre against
+#                                  the chamfer under contact instead of fighting
+#                                  a perfectly rigid constraint)
+#   joint_max_velocity: 4.0     -- real bugfix (E56): prevents the rigid
+#                                  position-control motor from building up a
+#                                  stiff-contact ejection artifact against an
+#                                  ungrasped peg (measured directly: resolves a
+#                                  peg-flies-away-at-0.8m/s episode cleanly)
+#
+# Reward: tilt_weight default raised 0.5->1.2 in rewards.py itself (not a
+# per-run override -- applies everywhere peg_in_hole is active), directly
+# acting on E56's tilt-lock diagnosis. A SuccessGatedAnneal softens
+# xy_err_weight (1.5->1.0) based on ROLLING TRAIN SUCCESS instead of a fixed
+# step-count schedule (every other curriculum in this codebase's failure
+# mode: it anneals whether or not the policy kept up). Thresholds calibrated
+# to THIS task's own observed range, not the 50%/20% used for easier
+# sub-tasks -- full monolithic Phase 4 success has never exceeded 0.027
+# rolling in any diagnostic so far, so a 50% advance threshold would
+# simply pin the curriculum at its easiest setting forever.
+#
+# NOT using model-based dreaming this run -- E51's own small amount (~1%
+# synthetic) is already baked into the warm-start checkpoint; E52/E53 both
+# independently confirmed more dreaming volume erases the depth gain without
+# buying anything else back, so this run isolates the environment/reward
+# fixes as their own clean comparison against E51, not confounded by a
+# dreaming-volume change too.
+#
+# Warm-started from runs/phase4_full_dream (E51), the standing-best full
+# monolithic Phase 4 checkpoint.
+phase: 4
+algo: ppo
+n_envs: 8
+frame_stack: 3
+cfg_overrides:
+  hole_chamfer: true
+  grasp_max_force: 15.0
+  joint_max_velocity: 4.0
+success_gated_curriculum:
+  setter_method: set_xy_err_weight
+  start: 1.5
+  end: 1.0
+  step_size: 0.05
+  advance_thresh: 0.05
+  regress_thresh: 0.01
+  window: 100
+  check_every: 2
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

@@ -1,0 +1,15 @@
+# DIAGNOSTIC-ONLY ros_gz bridge: exposes the Gazebo world's ground-truth
+# model poses on the ROS side so pose_error_logger.py can score the
+# estimated trajectory against truth.
+#
+# This is NOT part of the runtime stack -- it is only launched by the mapping
+# helper alongside the diagnostic logger. Reading /world/<world>/dynamic_pose
+# is a world-level SceneBroadcaster feature; nothing in model.sdf changes.
+#
+#   ros2 run ros_gz_bridge parameter_bridge --ros-args -p config_file:=<this>
+
+- ros_topic_name: "/gt/dynamic_pose"
+  gz_topic_name: "/world/warehouse/dynamic_pose/info"
+  ros_type_name: "tf2_msgs/msg/TFMessage"
+  gz_type_name: "gz.msgs.Pose_V"
+  direction: GZ_TO_ROS

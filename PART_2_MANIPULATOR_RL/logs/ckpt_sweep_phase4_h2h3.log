@@ -1,0 +1,45 @@
+=== ckpt_2500000 ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.010 collision=0.680 steps=172 path_eff=0.31 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_h2h3/ckpt_2500000.csv
+=== ckpt_3000000 ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.670 steps=184 path_eff=0.26 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_h2h3/ckpt_3000000.csv
+=== ckpt_3500000 ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.010 collision=0.745 steps=163 path_eff=0.32 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_h2h3/ckpt_3500000.csv
+=== ckpt_4000000 ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.010 collision=0.740 steps=158 path_eff=0.33 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_h2h3/ckpt_4000000.csv
+=== ckpt_4500000 ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.775 steps=142 path_eff=0.35 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_h2h3/ckpt_4500000.csv
+=== ckpt_500000 ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.345 steps=321 path_eff=0.33 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_h2h3/ckpt_500000.csv
+=== ckpt_1000000 ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.595 steps=232 path_eff=0.25 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_h2h3/ckpt_1000000.csv
+=== ckpt_1500000 ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.010 collision=0.660 steps=194 path_eff=0.32 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_h2h3/ckpt_1500000.csv
+=== ckpt_2000000 ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.010 collision=0.735 steps=160 path_eff=0.32 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_h2h3/ckpt_2000000.csv
+=== ckpt_5000000 ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.020 collision=0.760 steps=152 path_eff=0.27 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_h2h3/ckpt_5000000.csv
+=== ckpt_best ===
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.015 collision=0.775 steps=144 path_eff=0.32 depth=0.001 tilt=0.1
+[eval] wrote results/ckpt_sweep_phase4_h2h3/ckpt_best.csv
+ALL_DONE

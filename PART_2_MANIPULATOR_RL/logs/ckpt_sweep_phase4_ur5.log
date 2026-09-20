@@ -1,0 +1,11 @@
+=== ckpt_250000 ===
+pybullet build time: Nov 28 2023 23:45:17
+b3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+No inertial data for link, using mass=1, localinertiadiagonal = 1,1,1, identity local inertial frameb3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+ee_link[       in_dist] success=0.010 collision=0.520 steps=234 path_eff=0.31 depth=0.001 tilt=1.4
+[eval] wrote results/ckpt_sweep_phase4_ur5/ckpt_250000.csv
+=== ckpt_500000 ===
+pybullet build time: Nov 28 2023 23:45:17
+b3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+No inertial data for link, using mass=1, localinertiadiagonal = 1,1,1, identity local inertial frameb3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+ee_link

@@ -1,0 +1,32 @@
+# Phase 3 -- Obstacle-Aware, UR5 (6-DOF) port. Identical hyperparameters to
+# configs/ppo_phase3.yaml (KUKA/E13): dense obstacle-repulsion shaping
+# (rewards.py, reused unmodified) + an obstacle-count curriculum (0-1 -> 2-5,
+# annealed over 50% of training). Note: unlike KUKA's own history (where the
+# arm-jitter penalty was a LATER finetune, E48, landing 0.80/0.175 on top of
+# E13's 0.50/0.19), _ARM_JITTER_PEN_W is now a standing default in
+# rewards.py's compute() (applies to any task while grasped) -- so this run
+# gets that benefit from step 0, not retrofitted. Warm-started from Phase 2.
+phase: 3
+algo: ppo
+n_envs: 16
+frame_stack: 3
+grasp_curriculum: 0.35
+anneal_grasp_curriculum: true
+anneal_frac: 0.5
+obstacle_curriculum: true
+obstacle_curriculum_start: [0, 1]
+obstacle_curriculum_frac: 0.5
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

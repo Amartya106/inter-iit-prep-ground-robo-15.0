@@ -1,0 +1,48 @@
+pybullet build time: Nov 28 2023 23:45:17
+  25/200  success=0.000  depth_ok=0.000
+  50/200  success=0.020  depth_ok=0.020
+  75/200  success=0.013  depth_ok=0.040
+  100/200  success=0.020  depth_ok=0.040
+  125/200  success=0.024  depth_ok=0.048
+  150/200  success=0.027  depth_ok=0.047
+  175/200  success=0.023  depth_ok=0.046
+  200/200  success=0.020  depth_ok=0.040
+
+==================================================================
+ORACLE CEILING -- phase 4, eval split, N=200
+privileged scripted IK expert (scripts/scripted_expert.py)
+==================================================================
+
+OVERALL
+  success        : 0.0200   (4/200)
+  collided       : 0.220
+  mean steps     : 319.5
+
+FUNNEL (fraction of ALL 200 episodes reaching each stage)
+  grasp_ok  peg ever picked up                   0.670   (conditional 0.670)
+  align_ok  above mouth, xy < 10mm               0.540   (conditional 0.806)
+  enter_ok  peg centre >5mm past mouth           0.055   (conditional 0.102)
+  depth_ok  reached 30mm depth                   0.040   (conditional 0.727)
+  success   + tilt, held 10 steps, no collision  0.020   (conditional 0.500)
+
+EXPERT STATE MACHINE (its own final state)
+  ALIGN          97  (48.5%)
+  DESCEND        59  (29.5%)
+  INSERT         26  (13.0%)
+  GRASP          14  (7.0%)
+  APPROACH        4  (2.0%)
+  ever entered INSERT (its own xy<3.5mm gate fired): 0.130
+
+PRECISION (of 134 grasped episodes)
+  min xy_err while grasped       mean=3.31cm  median=0.20cm  best=0.00cm
+  min xy_err while above mouth   mean=1.84cm  median=0.20cm  best=0.00cm
+  max_depth                      mean=0.18cm  median=0.00cm  best=6.39cm
+
+WHY THE DESCENT STALLS
+  episodes with peg-vs-hole-ring contact: 53/200 (26.5%)
+    xy_err at FIRST ring contact: mean=4.58cm  median=5.33cm  best=0.12cm
+    steps in ring contact:        mean=119.8  median=24.0  worst=400
+  peg-TIP height at max depth: mean=2.00cm  median=2.12cm  lowest=-0.39cm
+    (mouth plane is at z=10.00cm; tip must reach z=3.00cm for success)
+
+[oracle] per-episode rows -> runs/oracle_frozen_n200.json

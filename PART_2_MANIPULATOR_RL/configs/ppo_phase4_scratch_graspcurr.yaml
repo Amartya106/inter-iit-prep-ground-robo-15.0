@@ -1,0 +1,58 @@
+# Phase 4 -- first full-task training run against E79's grasp-weld fix
+# (manipularl/env.py's _form_grasp, EXPERIMENTS.md). From SCRATCH (no warm
+# start), phase-2's proven E7 recipe (configs/ppo_phase2_scratch.yaml)
+# transposed to phase 4. Rationale: every phase that was ever actually
+# solved used an annealed grasp_curriculum, and no full-task phase-4
+# config ever has (ppo_phase4.yaml only used align_curriculum, which
+# bootstraps insert/hold given an ALREADY-grasped peg, never cold-start
+# grasping itself). Phase 2's identical grasp-collapse symptom was solved
+# by DROPPING the warm start entirely (E7) -- the source policy's habit
+# was actively wrong and ent_coef couldn't unlearn it fast enough. The
+# current best phase-4 source (ppo_phase4_utility.yaml) is warm-started
+# from phase3_ppo_best, which was itself trained under the OLD buggy weld
+# and a looser 9cm grasp gate -- its grasp habit is now provably wrong too.
+#
+# align_curriculum deliberately OMITTED: E16/E17 already found it null, and
+# reset()'s elif chain means stacking it on top of grasp_curriculum would
+# just starve the cold-start episodes this run exists to test.
+#
+# satisficing_proximity/risk_seeking_depth kept ON: E78's utility-RL run
+# verified these numerically (the hover-vs-attempt reward ridge narrows
+# 59.4x->16.6x with risk_seeking_depth on) and they're reward-only, fully
+# orthogonal to the grasp-weld bug -- no reason to regress a real, separate
+# fix while testing this one.
+#
+#   MANIPULARL_TORCH_THREADS=4 .venv_gpu_test/bin/python train.py \
+#     --config configs/ppo_phase4_scratch_graspcurr.yaml \
+#     --seed 0 --out-dir runs/phase4_scratch_graspcurr \
+#     > logs/phase4_scratch_graspcurr.log 2>&1
+#
+# Early kill gate: stage the 1.0M checkpoint (checkpoints/model_1000000_steps.zip
+# + matching vecnormalize), evaluate.py --phase 4 --algo ppo --episodes 100.
+# Kill if ever_grasped_rate < 0.10 at 1.0M AND still < 0.15 at 1.5M -- two
+# consecutive near-zero cold-grasp readings means the admissibility band is
+# binding (see configs/ppo_phase4_scratch_wideadmit.yaml, running in
+# parallel to test exactly that), not that training needs longer.
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+grasp_curriculum: 0.7
+anneal_grasp_curriculum: true
+anneal_frac: 0.6
+satisficing_proximity: true
+risk_seeking_depth: true
+total_timesteps: 5000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.008
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

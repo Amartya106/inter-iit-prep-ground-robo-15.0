@@ -1,0 +1,37 @@
+# Phase 2 -- Pick and Place, UR5, ARM B of a 2-way retry after the first
+# attempt (ppo_phase2_ur5.yaml) converged to only 0.005 success. Isolates a
+# HYPERPARAMETER adjustment at the ORIGINAL 3.0M-step duration (not run
+# longer -- see ppo_phase2_ur5_longer.yaml for that, isolated separately):
+#   ent_coef 0.008 -> 0.015 -- more exploration pressure. Unlike Phase 1
+#     (pure reaching, already solved cleanly), Phase 2 trains reach+grasp
+#     FROM SCRATCH under its own reward shaping (deliberately not warm-
+#     started from Phase 1, per E5/E6's original negative-transfer finding)
+#     -- the diagnostic on the first UR5 attempt found genuinely
+#     inconsistent approach behavior (min EE-peg distance ranged 0.05-0.38m
+#     across 3 episodes), consistent with under-exploration of the
+#     approach, not a hard block.
+#   anneal_frac 0.7 -> 0.85 -- the curriculum's transition to full cold-
+#     start lands later and gentler (more of training spent still
+#     partially assisted before going fully unassisted), instead of a
+#     sharp transition with ~30% of training left to adapt cold.
+phase: 2
+algo: ppo
+n_envs: 16
+frame_stack: 3
+grasp_curriculum: 0.7
+anneal_grasp_curriculum: true
+anneal_frac: 0.85
+total_timesteps: 3000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.015
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

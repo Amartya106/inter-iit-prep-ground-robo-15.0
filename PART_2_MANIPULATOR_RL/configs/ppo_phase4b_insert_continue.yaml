@@ -1,0 +1,41 @@
+# Phase 4 -- Task 2 CONTINUATION. Same task as ppo_phase4b_insert.yaml
+# (E33: 0.025 success, insert_depth_mean 0.00314 -- first nonzero formal-
+# eval result in Phase 4's history), continuing from that run's own
+# checkpoint for more budget, now with the new forearm-vs-hole-ring dense
+# repulsion shaping (rewards.py's _RING_REPULSE_MARGIN/_RING_REPULSE_W,
+# env._min_ring_dist) targeting E33's diagnostic finding: 48.4%+29.0% of
+# collision-steps were the forearm (links 4/5), not the flange.
+#
+# insert_start_depth_frac is set to 0.02 (anneal_frac) -- NOT 0.5 like the
+# original run -- because E33 already fully annealed its curriculum to the
+# hard (real, depth-0) setting by 50% of its own budget and held there for
+# the back half. Restarting the anneal from 1.0 on a fresh total_timesteps
+# would throw away that progress and re-spend budget on the easy setting
+# again. 0.02 anneal_frac reaches depth-0 almost immediately, continuing
+# from where E33 left off rather than re-ramping.
+#
+# Warm-start: runs/phase4_task2_insert/model.zip (E33's own checkpoint, NOT
+# E24) -- continuing this specific policy's progress, not restarting.
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  insert_only: true
+  max_steps: 80
+insert_start_depth_curriculum: true
+insert_start_depth_frac: 0.02
+total_timesteps: 3000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

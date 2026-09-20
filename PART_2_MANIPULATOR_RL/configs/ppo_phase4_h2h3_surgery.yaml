@@ -1,0 +1,62 @@
+# Phase 4 -- E74, the combined-fix plan's second test (parsed-plotting-allen.md).
+#
+# Same combination as E73 (padded warm-start + H2 + H3 + LogStdBandClamp),
+# now on the REAL, full monolithic task (cold-start reach -> grasp ->
+# transit -> align -> insert, max_steps=400) instead of the isolated insert
+# sub-task. Gated on E73's result per the plan: E73's checkpoint sweep
+# (11/11 checkpoints, runs/phase4b_insert_h2h3) found `best_model.zip`
+# scored success=0.040/depth=0.004 -- roughly 2x tonight's floor (0.01-0.02)
+# and ~1.6x E33's own historical precedent (0.025), the best formally-
+# evaluated (200-episode) Phase 4 KUKA number produced by this entire
+# investigation. That does NOT null out, so this proceeds per the plan's
+# own gate.
+#
+# Earlier tonight's H2+H3 test (configs/ppo_phase4_h2h3.yaml,
+# runs/phase4_ppo_h2h3) ran this exact task from scratch (H3's 8 new obs
+# dims broke normal --warm-start) with a plain ent_coef=0.01 and no
+# exploration-band control -- a clean null, 11/11 checkpoints on the same
+# floor, including checkpoints from a window where EvalCallback's own
+# reward briefly went positive (peak +3.29) that turned out not to reflect
+# real insertion progress at all. This config is the direct fill of that
+# gap: --warm-start-pad (train.py) starts from runs/phase3_ppo_best's
+# actual competence via a verified function-preserving surgery (exact 0.0
+# difference, torch.allclose, over 20 random trials) instead of throwing it away,
+# and --log-std-min/--log-std-max replaces the ent_coef guessing that
+# failed in opposite directions both times tonight (0.0: permanent
+# collapse; 0.003, two seeds: never discovers grasping) with a mechanism
+# that structurally cannot do either.
+#
+#   python train.py --config configs/ppo_phase4_h2h3_surgery.yaml \
+#     --warm-start-pad runs/phase3_ppo_best/model.zip \
+#     --log-std-min 0.3 --log-std-max 2.0 \
+#     --out-dir runs/phase4_h2h3_surgery
+#
+# Same hyperparameters/budget as tonight's from-scratch H2+H3 attempt (5M
+# steps, n_envs 16) -- single variable vs that run is the warm-start +
+# exploration-band control, isolating exactly what E73 showed moves the
+# needle on the sub-task.
+#
+# Decision gate: full checkpoint sweep (not final model), evaluate.py
+# --phase 4 --episodes 200 (no --insert-only this time -- this is the real,
+# full cold-start task). Compare against tonight's floor (0.01-0.02/0.001)
+# and against E73's own 0.040/0.004. Depth clearing meaningfully past 0.001
+# on ANY checkpoint is the bar that matters -- success alone is a known
+# floor effect (E63).
+phase: 4
+algo: ppo
+n_envs: 16
+frame_stack: 3
+total_timesteps: 5000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

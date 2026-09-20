@@ -1,0 +1,39 @@
+# Phase 4 -- Task 1 CONTINUATION. Same task as ppo_phase4a_align.yaml (E35:
+# 0/200 success, but grasp_failure_rate down to 0.72 from E31/E32's
+# ~0.92-0.93, and training telemetry showed it STABILIZING (0.55-0.77 band)
+# rather than climbing toward collapse) -- continuing from E35's own
+# checkpoint for more budget on the hypothesis that it was still genuinely
+# improving, not plateaued, when its original 2M-step budget ran out.
+#
+# grasp_curriculum anneal_frac set tiny (0.02, not 0.4) -- E35 already fully
+# annealed its curriculum to 0 by 44% of its own budget and held there for
+# the back half; restarting the anneal from 0.5 on a fresh total_timesteps
+# would re-spend budget on the easy pre-grasped crutch instead of
+# continuing to refine cold-start grasp-hold stability from where E35 left
+# off.
+#
+# Warm-start: runs/phase4_task1_align_v3/model.zip (E35's own checkpoint,
+# NOT E24) -- continuing this specific policy's progress, not restarting.
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  align_only: true
+grasp_curriculum: 0.5
+anneal_grasp_curriculum: true
+anneal_frac: 0.02
+total_timesteps: 4000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

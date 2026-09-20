@@ -1,0 +1,7 @@
+pybullet build time: Nov 28 2023 23:45:17
+b3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+No inertial data for link, using mass=1, localinertiadiagonal = 1,1,1, identity local inertial frameb3Warning[examples/Importers/ImportURDFDemo/BulletUrdfImporter.cpp,126]:
+ee_link/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate_ur5.py:151: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.125 collision=0.750 steps=87 path_eff=0.66 depth=0.000 tilt=nan
+[eval] wrote results/eval_phase3_ur5_longer.csv

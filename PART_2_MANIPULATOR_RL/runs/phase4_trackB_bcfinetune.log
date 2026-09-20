@@ -1,0 +1,17 @@
+>>> 14:40:05 TRAIN phase4 Track B (RL fine-tune from BC-pretrained insert-segment demos)
+pybullet build time: Nov 28 2023 23:45:17
+[train] phase=4 algo=ppo n_envs=14 steps=5,000,000 frame_stack=3 -> runs/phase4_bc_insert_finetune
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17

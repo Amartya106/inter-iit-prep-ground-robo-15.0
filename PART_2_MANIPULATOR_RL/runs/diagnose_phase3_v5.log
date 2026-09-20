@@ -1,0 +1,20 @@
+pybullet build time: Nov 28 2023 23:45:17
+=== runs/phase3_ppo_v5_repulsetune ===
+N=150  success=0.70
+failures: 45
+  of failures: collided                     0.71
+  of failures: never grasped                 0.18
+  of failures: grasped, never reached target 0.33
+  of failures: reached target, never released0.42
+  of failures: collided AND never grasped    0.07
+  of failures: collided AFTER grasping       0.64
+mean steps: all=111.3  success=56.9  fail=238.2
+grasp formed: 142/150 (0.95), mean t_first_grasp=24.9
+mean obstacle clearance kept -- empty-handed: 14.0cm (n=150)   carrying: 17.2cm (n=142)
+
+collision-steps total: 1182
+which part of the arm/peg was in contact (a step can count toward >1 if multi-contact):
+  link6                    859  (72.7% of collision-steps)
+  link7                    394  (33.3% of collision-steps)
+  link5                    325  (27.5% of collision-steps)
+  peg(held object)          45  (3.8% of collision-steps)

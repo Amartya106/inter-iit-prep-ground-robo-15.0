@@ -1,0 +1,5 @@
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:126: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.690 collision=0.245 steps=68 path_eff=0.33 depth=0.000 tilt=nan
+[eval] wrote results/eval_phase3_v8_jitter_ckpt500k.csv

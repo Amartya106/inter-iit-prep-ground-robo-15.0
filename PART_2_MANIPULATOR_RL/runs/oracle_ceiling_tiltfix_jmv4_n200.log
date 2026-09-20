@@ -1,0 +1,48 @@
+pybullet build time: Nov 28 2023 23:45:17
+  25/200  success=0.000  depth_ok=0.000
+  50/200  success=0.020  depth_ok=0.020
+  75/200  success=0.013  depth_ok=0.013
+  100/200  success=0.020  depth_ok=0.020
+  125/200  success=0.024  depth_ok=0.024
+  150/200  success=0.027  depth_ok=0.027
+  175/200  success=0.023  depth_ok=0.023
+  200/200  success=0.020  depth_ok=0.020
+
+==================================================================
+ORACLE CEILING -- phase 4, eval split, N=200
+privileged scripted IK expert (scripts/scripted_expert.py)
+==================================================================
+
+OVERALL
+  success        : 0.0200   (4/200)
+  collided       : 0.580
+  mean steps     : 197.4
+
+FUNNEL (fraction of ALL 200 episodes reaching each stage)
+  grasp_ok  peg ever picked up                   0.115   (conditional 0.115)
+  align_ok  above mouth, xy < 10mm               0.005   (conditional 0.043)
+  enter_ok  peg centre >5mm past mouth           0.020   (conditional 4.000)
+  depth_ok  reached 30mm depth                   0.020   (conditional 1.000)
+  success   + tilt, held 10 steps, no collision  0.020   (conditional 1.000)
+
+EXPERT STATE MACHINE (its own final state)
+  DESCEND       171  (85.5%)
+  ALIGN          11  (5.5%)
+  LIFT            9  (4.5%)
+  GRASP           5  (2.5%)
+  APPROACH        4  (2.0%)
+  ever entered INSERT (its own xy<3.5mm gate fired): 0.000
+
+PRECISION (of 23 grasped episodes)
+  min xy_err while grasped       mean=13.79cm  median=11.92cm  best=0.74cm
+  min xy_err while above mouth   mean=11.46cm  median=10.87cm  best=0.74cm
+  max_depth                      mean=0.00cm  median=0.00cm  best=0.00cm
+
+WHY THE DESCENT STALLS
+  episodes with peg-vs-hole-ring contact: 44/200 (22.0%)
+    xy_err at FIRST ring contact: mean=5.82cm  median=6.02cm  best=0.34cm
+    steps in ring contact:        mean=89.0  median=20.0  worst=400
+  peg-TIP height at max depth: mean=-0.00cm  median=-0.00cm  lowest=-0.01cm
+    (mouth plane is at z=10.00cm; tip must reach z=3.00cm for success)
+
+[oracle] per-episode rows -> runs/oracle_tiltfix_jmv4_n200.json

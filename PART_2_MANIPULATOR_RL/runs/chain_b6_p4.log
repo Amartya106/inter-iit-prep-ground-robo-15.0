@@ -1,0 +1,50 @@
+>>> 12:35:31 waiting for phase3 TrackA wrapper (389276) to finish
+>>> 12:55:02 phase3 TrackA wrapper done
+>>> 12:55:02 waiting for phase3 bc_pretrain (394585) to finish
+>>> 12:55:02 phase3 bc_pretrain done
+>>> 12:55:02 TRAIN phase3 TrackB finetune (BC warm-start)
+pybullet build time: Nov 28 2023 23:45:17
+[train] phase=3 algo=ppo n_envs=16 steps=2,500,000 frame_stack=3 -> runs/phase3_bc_finetune
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+[train] warm-starting from runs/phase3_bc/model.zip
+[train] grasp-curriculum anneal 0.35 -> 0.0 over 50% of training
+[train] obstacle-count curriculum (0, 1) -> (2, 5) over 50% of training
+Eval num_timesteps=250000, episode_reward=-39.44 +/- 85.75
+Episode length: 350.00 +/- 0.00
+New best mean reward!
+Eval num_timesteps=500000, episode_reward=-52.71 +/- 90.13
+Episode length: 350.00 +/- 0.00
+Eval num_timesteps=750000, episode_reward=-57.61 +/- 79.99
+Episode length: 350.00 +/- 0.00
+Eval num_timesteps=1000000, episode_reward=-69.42 +/- 83.86
+Episode length: 350.00 +/- 0.00
+Eval num_timesteps=1250000, episode_reward=-42.38 +/- 55.66
+Episode length: 350.00 +/- 0.00
+Eval num_timesteps=1500000, episode_reward=-16.64 +/- 8.64
+Episode length: 350.00 +/- 0.00
+New best mean reward!
+Eval num_timesteps=1750000, episode_reward=-16.91 +/- 8.60
+Episode length: 350.00 +/- 0.00
+Eval num_timesteps=2000000, episode_reward=-22.95 +/- 18.65
+Episode length: 350.00 +/- 0.00
+Eval num_timesteps=2250000, episode_reward=-14.44 +/- 9.97
+Episode length: 350.00 +/- 0.00
+New best mean reward!
+Eval num_timesteps=2500000, episode_reward=-22.63 +/- 13.66
+Episode length: 350.00 +/- 0.00
+[train] saved runs/phase3_bc_finetune/model.zip and runs/phase3_bc_finetune/vecnormalize.pkl

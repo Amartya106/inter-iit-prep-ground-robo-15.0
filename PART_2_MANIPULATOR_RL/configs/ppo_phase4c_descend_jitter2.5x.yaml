@@ -1,0 +1,55 @@
+# Phase 4 -- Task 1b/"descend" (I further split Task 1 into
+# two subparts):
+#   1a ("airspace align", align_only) -- reach+grasp+align the peg's xy/tilt
+#     with the hole, at ANY height in the "airspace" column above it. Its
+#     potential-shaping no longer pulls toward a specific height (see
+#     rewards.py's align_only branch of _potential -- height-free by
+#     construction, verified: phi identical at 5cm vs 25cm above the mouth).
+#   1b ("descend", THIS config, cfg_overrides.descend_only) -- starts already
+#     grasped + xy-aligned at a RANDOM height within that same airspace
+#     column (env._start_pre_airspace, 3-15cm above the mouth, drawn fresh
+#     every episode/reset -- not annealed/curriculum, always randomized) and
+#     has to move smoothly straight down into the hole while staying
+#     aligned. Reuses the FULL (non-align_only) peg_in_hole success/
+#     potential unchanged -- xy+tilt+depth all still active, this is
+#     genuinely the same success bar as insert_only, just with more vertical
+#     distance to cover and a randomized starting point instead of always
+#     starting right at the mouth.
+#
+# This variant: arm_jitter_pen_w = 2.5x the default (_ARM_JITTER_PEN_W=0.03
+# -> 0.045). E41's introduction of the (then-fixed-strength) arm-jitter
+# penalty was the single best change in the whole Task 1 series (collision
+# 0.30, best so far; toggle-median 1) -- testing whether MORE of it
+# specifically helps smooth, controlled descent (the literal thing this
+# sub-task is about) is a direct, motivated follow-up. Run in parallel with
+# the 1.5x and 2x variants (same config otherwise) to isolate the dose-
+# response, not just a single point.
+#
+# Warm-started from the BEST PHASE 3 CHECKPOINT (runs/phase3_ppo_best,
+# E48 -- NOT E24/phase3_ppo_v7_terminal, per explicit direction), since that
+# checkpoint is itself the adopted-best baseline arm-control competence
+# going forward.
+phase: 4
+algo: ppo
+n_envs: 8
+frame_stack: 3
+cfg_overrides:
+  descend_only: true
+  max_steps: 150
+arm_jitter_pen_w: 0.075
+airspace_height_curriculum: true
+airspace_height_anneal_frac: 0.5
+total_timesteps: 2000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

@@ -1,0 +1,29 @@
+# Phase 2 -- Pick and Place, UR5 (6-DOF) port. FROM SCRATCH, not warm-started
+# from Phase 1 -- identical hyperparameters to configs/ppo_phase2_scratch.yaml
+# (KUKA/E7, the config that actually solved Phase 2). E5/E6's own diagnosis
+# (diagnose_phase2.py) found the Phase-1-warm-started policy stalled ~27cm
+# from the peg, still reaching toward goal_pos (Phase 1's own target) instead
+# of the peg -- a negative-transfer failure mode that is about what Phase 1
+# itself teaches, not robot-specific, so there's no reason to expect it
+# transfers any better on UR5. Grasp curriculum 0.7 -> 0, annealed over 70%.
+phase: 2
+algo: ppo
+n_envs: 16
+frame_stack: 3
+grasp_curriculum: 0.7
+anneal_grasp_curriculum: true
+anneal_frac: 0.7
+total_timesteps: 3000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.008
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

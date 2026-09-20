@@ -1,0 +1,47 @@
+# Phase 4 -- Task 2 of a SeqPolicy-style task decomposition (pick / align /
+# insert as separate sub-policies -- see
+# https://www.sciopen.com/article/10.26599/AIR.2024.9150043; I split the
+# task along those lines). This task is ONLY the final push-through: every
+# episode, train AND eval, starts already grasped and xy/tilt-aligned
+# directly in the insertion zone (env._start_pre_inserted, cfg.insert_only)
+# -- unlike Track A's insert_curriculum (a FRACTION of episodes, annealed to
+# 0, mixed into the full cold-start task and diluted away by the anneal --
+# see E30, null result), 100% of this task's episodes start there, so the
+# push-through motion gets dense, undiluted, every-episode exposure.
+#
+# insert_start_depth_curriculum anneals the FREE starting depth given at
+# reset from 1.0 (starts already past insert_success_depth -- trivial, just
+# learn to hold) down to 0.0 (starts at depth EXACTLY 0, peg tip just
+# touching the mouth -- the real task, genuine push-through required) over
+# the first insert_start_depth_frac of training. Eval always forces 0.0
+# regardless (enforced in env.py itself), so eval numbers reflect the real,
+# undiluted skill, never the training crutch.
+#
+# max_steps is cut way down from Phase 4's 400 -- this task has no reach/
+# grasp/transit legs to cover, just a few cm of vertical motion.
+#
+# Warm-started from E24 (Phase 3's final best) for baseline arm-control
+# competence, same as every other Phase 4 attempt so far.
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  insert_only: true
+  max_steps: 80
+insert_start_depth_curriculum: true
+insert_start_depth_frac: 0.5
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

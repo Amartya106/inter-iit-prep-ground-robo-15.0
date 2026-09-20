@@ -1,0 +1,36 @@
+# Phase 4 - Peg-in-Hole. Track A of the reverse-insertion-depth-curriculum
+# plan: four independent attempts (E10 baseline, E16/E17 Track-A reward
+# fixes, E28 rebaseline from a much stronger Phase-3 base) all found the
+# exact same wall -- transit+align works (90% of grasped episodes get the
+# peg within 10cm of the hole, best case 0.24cm) but max_depth is EXACTLY
+# 0.00cm, every episode, every time. The policy has never once experienced
+# holding/pushing a peg already through the ~3mm bore, so no reward shaping
+# fixes a motion that's never been sampled.
+#
+# This adds insert_curriculum (env._start_pre_inserted, new -- teleports the
+# grasped peg to just past insert_success_depth, annealed 0.6 -> 0 over 50%
+# of training) -- one stage further than align_curriculum, which is
+# deliberately left OFF here (E16/E17 already showed it null on its own,
+# and alignment was never the diagnosed bottleneck -- don't compound two
+# untested variables in one run).
+phase: 4
+algo: ppo
+n_envs: 16
+frame_stack: 3
+insert_curriculum: 0.6
+anneal_insert_curriculum: true
+insert_anneal_frac: 0.5
+total_timesteps: 5000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

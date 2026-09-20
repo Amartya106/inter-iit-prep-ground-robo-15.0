@@ -1,0 +1,40 @@
+# Phase 3 -- Obstacle-Aware, UR5 (6-DOF) port. DURATION-only retry after two
+# 2.5M-step attempts both failed to converge:
+#   ppo_phase3_ur5.yaml (pre-fix):  0.065 success / 0.665 collision
+#   ppo_phase3_ur5_fixed run (same config, manipularl_ur5/env.py's gripper-
+#     link obstacle-shaping blind spot fixed): 0.015 success / 0.720
+#     collision -- the fix genuinely changed the qualitative failure pattern
+#     (traced collisions shifted from 100% gripper-link to ~50/50
+#     gripper/arm) but didn't move the aggregate rate within the same 2.5M
+#     step budget.
+# Mirrors Phase 2's own resolved case exactly: ppo_phase2_ur5.yaml (3.0M
+# steps, from scratch) converged to only 0.005: raising duration alone to
+# 5.0M steps (ppo_phase2_ur5_longer.yaml, no other change) reached 0.850.
+# Same lever, applied here: identical hyperparameters/curriculum fractions
+# to ppo_phase3_ur5.yaml, total_timesteps 2.5M -> 5.0M. Warm-started from
+# runs/phase2_ppo_ur5_longer (the same source as both prior Phase 3
+# attempts), using the fixed manipularl_ur5/env.py.
+phase: 3
+algo: ppo
+n_envs: 16
+frame_stack: 3
+grasp_curriculum: 0.35
+anneal_grasp_curriculum: true
+anneal_frac: 0.5
+obstacle_curriculum: true
+obstacle_curriculum_start: [0, 1]
+obstacle_curriculum_frac: 0.5
+total_timesteps: 5000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

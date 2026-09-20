@@ -1,0 +1,65 @@
+# Phase 4 -- R3, the diagnosed fix after R1/R2 both stalled at
+# ever_grasped_rate ~0.000-0.005 through the full 5M budget.
+#
+# What actually happened to R1/R2 (traced directly, not guessed): 85% of
+# eval episodes COLLIDE before ever grasping (scripts/diagnose_phase4.py),
+# and only 23% of episodes ever even reach within the 9cm grasp-trigger
+# radius of the peg at all (traced directly with a scripted rollout)
+# -- collision_is_failure=True terminates the episode before the
+# approach can complete. R2's widened admissibility band made zero
+# difference (if anything slightly worse), so the band was NOT the binding
+# constraint -- this is. R1/R2's recipe (from scratch, grasp_curriculum,
+# phase 4's full 3-obstacle scene from step 0) asked a fresh policy to learn
+# cold-start grasping AND obstacle avoidance simultaneously, something no
+# prior successful recipe in this project ever required: phase 3's own
+# progression solved grasp+carry FIRST (phase 2, zero obstacles), THEN added
+# obstacles via warm start. R1/R2 skipped that staging.
+#
+# The fix: obstacle_curriculum (manipularl/callbacks.py's
+# ObstacleCountCurriculum, wired in train.py) -- proven, not new. It's the
+# SAME mechanism phase 3's own adopted config (configs/ppo_phase3.yaml, E13)
+# used alongside its own grasp_curriculum: obstacle_curriculum_start=[0,1]
+# (default), anneal to the phase's real [obstacle_min, obstacle_max]=[2,5]
+# over 50% of training -- E13 took phase 3 from 0.515/0.28 to 0.765/0.195
+# with this lever. Everything else identical to R1 (ppo_phase4_scratch_
+# graspcurr.yaml) -- one new variable, isolated, matching this project's own
+# post-E79 methodology. Admissibility band left at its E79 default (R2
+# already showed widening it doesn't help).
+#
+#   MANIPULARL_TORCH_THREADS=4 .venv_gpu_test/bin/python train.py \
+#     --config configs/ppo_phase4_scratch_obstaclecurr.yaml \
+#     --seed 0 --out-dir runs/phase4_scratch_obstaclecurr \
+#     > logs/phase4_scratch_obstaclecurr.log 2>&1
+#
+# Same kill gate as R1/R2: evaluate.py --phase 4 --algo ppo --episodes 100
+# at the 1.0M and 1.5M checkpoints, watch ever_grasped_rate AND collision_rate
+# this time (the new, real signal) -- kill if collision_rate is still >0.6
+# at 1.5M (obstacle avoidance not being learned at all) OR ever_grasped_rate
+# is still <0.10 despite collision_rate having genuinely dropped (would mean
+# a second, separate blocker).
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+grasp_curriculum: 0.7
+anneal_grasp_curriculum: true
+anneal_frac: 0.6
+obstacle_curriculum: true
+obstacle_curriculum_start: [0, 1]
+obstacle_curriculum_frac: 0.5
+satisficing_proximity: true
+risk_seeking_depth: true
+total_timesteps: 5000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.008
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

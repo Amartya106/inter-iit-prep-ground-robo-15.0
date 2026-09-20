@@ -1,0 +1,45 @@
+pybullet build time: Nov 28 2023 23:45:17
+  25/100  success=0.000  depth_ok=0.000
+  50/100  success=0.020  depth_ok=0.020
+  75/100  success=0.013  depth_ok=0.013
+  100/100  success=0.020  depth_ok=0.020
+
+==================================================================
+ORACLE CEILING -- phase 4, eval split, N=100
+privileged scripted IK expert (scripts/scripted_expert.py)
+==================================================================
+
+OVERALL
+  success        : 0.0200   (2/100)
+  collided       : 0.280
+  mean steps     : 299.2
+
+FUNNEL (fraction of ALL 100 episodes reaching each stage)
+  grasp_ok  peg ever picked up                   0.610   (conditional 0.610)
+  align_ok  above mouth, xy < 10mm               0.380   (conditional 0.623)
+  enter_ok  peg centre >5mm past mouth           0.030   (conditional 0.079)
+  depth_ok  reached 30mm depth                   0.020   (conditional 0.667)
+  success   + tilt, held 10 steps, no collision  0.020   (conditional 1.000)
+
+EXPERT STATE MACHINE (its own final state)
+  ALIGN          45  (45.0%)
+  DESCEND        35  (35.0%)
+  GRASP           9  (9.0%)
+  INSERT          8  (8.0%)
+  APPROACH        2  (2.0%)
+  LIFT            1  (1.0%)
+  ever entered INSERT (its own xy<3.5mm gate fired): 0.080
+
+PRECISION (of 61 grasped episodes)
+  min xy_err while grasped       mean=5.54cm  median=0.66cm  best=0.03cm
+  min xy_err while above mouth   mean=2.14cm  median=0.61cm  best=0.03cm
+  max_depth                      mean=0.05cm  median=0.00cm  best=2.75cm
+
+WHY THE DESCENT STALLS
+  episodes with peg-vs-hole-ring contact: 37/100 (37.0%)
+    xy_err at FIRST ring contact: mean=5.07cm  median=5.51cm  best=0.34cm
+    steps in ring contact:        mean=98.0  median=8.0  worst=400
+  peg-TIP height at max depth: mean=2.25cm  median=1.63cm  lowest=-0.01cm
+    (mouth plane is at z=10.00cm; tip must reach z=3.00cm for success)
+
+[oracle] per-episode rows -> runs/oracle_chamfer_compliant_f20_n100.json

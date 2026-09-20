@@ -1,0 +1,47 @@
+# Phase 4 -- Task 1 v8b "drop-penalty-anneal". Alternative to v7's failed
+# approach-bonus doubling for fixing grasp-shyness: instead of making
+# approaching MORE rewarding (which E42 showed backfires -- hovering near
+# the peg without committing became a more profitable safe harbor),
+# anneal _GRASP_DROP_PEN itself UP from a small starting value (0.3) to
+# full strength (2.0) over the first 50% of training (GraspDropPenaltyAnneal,
+# manipularl/callbacks.py). Hypothesis: the drop-penalty's fixed, full-
+# strength-from-step-0 cost may itself be what drives grasp-shyness --
+# during early exploration, when accidental bad grasps are common, a harsh
+# ever-present punishment makes "never risk it" the locally-optimal
+# response before the policy has a confident grasp-and-hold habit worth
+# protecting.
+#
+# Also includes the settling bonus (permanent, unconditional -- automatic)
+# and E41's original xy_err_weight_anneal_frac=0.7 + reverted grasp bonuses
+# (0.08/0.05, matching v8_settle.yaml) -- same base as the other two v8
+# variants, varying ONLY the grasp-shyness mechanism.
+#
+# Fresh warm-start from E24.
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  align_only: true
+xy_err_weight_curriculum: true
+xy_err_weight_start: 1.5
+xy_err_weight_end: 1.0
+xy_err_weight_anneal_frac: 0.7
+grasp_drop_pen_curriculum: true
+grasp_drop_pen_start: 0.3
+grasp_drop_pen_end: 2.0
+grasp_drop_pen_anneal_frac: 0.5
+total_timesteps: 2000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

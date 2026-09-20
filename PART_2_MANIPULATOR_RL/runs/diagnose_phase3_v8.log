@@ -1,0 +1,22 @@
+pybullet build time: Nov 28 2023 23:45:17
+=== runs/phase3_ppo_v8_wristvel ===
+N=150  success=0.74
+failures: 39
+  of failures: collided                     0.79
+  of failures: never grasped                 0.44
+  of failures: grasped, never reached target 0.54
+  of failures: reached target, never released0.00
+  of failures: collided AND never grasped    0.44
+  of failures: collided AFTER grasping       0.36
+mean steps: all=70.7  success=56.6  fail=110.9
+grasp formed: 133/150 (0.89), mean t_first_grasp=22.8
+mean obstacle clearance kept -- empty-handed: 13.3cm (n=150)   carrying: 14.6cm (n=133)
+
+collision-steps total: 31
+which part of the arm/peg was in contact (a step can count toward >1 if multi-contact):
+  link7                     19  (61.3% of collision-steps)
+  link6                      5  (16.1% of collision-steps)
+  peg(held object)           5  (16.1% of collision-steps)
+  link5                      2  (6.5% of collision-steps)
+  link4                      1  (3.2% of collision-steps)
+  link3                      1  (3.2% of collision-steps)

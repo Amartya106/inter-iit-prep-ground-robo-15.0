@@ -1,0 +1,32 @@
+# Phase 2 - Pick and Place.  PPO primary workhorse (this CPU's TQC grad-step cost
+# made a full off-policy curriculum infeasible in the time budget).
+#
+# Fallback-plan iteration 1 (diagnose_phase2 findings): cold-start EE stalled
+# ~27 cm from the peg and only 38% of at-target holds released. Paired with the
+# rewards.py shaping fixes (wider grasp-approach kernel, in-range bonus, carry
+# checkpoint, hold-bonus cut + release penalty), plus:
+#   - grasp_curriculum 0.5 -> 0.6, annealed to 0.0 over 60% of training so the
+#     policy is forced onto cold-start grasping while bootstrapped
+#   - ent_coef 0.003 -> 0.008 to help PPO escape the phase-1 "reach to goal_pos"
+#     basin the warm-start drops it in
+phase: 2
+algo: ppo
+n_envs: 16
+frame_stack: 3
+grasp_curriculum: 0.6
+anneal_grasp_curriculum: true
+anneal_frac: 0.6
+total_timesteps: 3000000
+hyperparams:
+  learning_rate: 0.0002
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.008
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

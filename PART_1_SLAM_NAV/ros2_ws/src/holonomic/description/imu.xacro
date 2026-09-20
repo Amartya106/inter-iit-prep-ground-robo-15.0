@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- IMU link, mounted at the chassis centre for odometry fusion -->
+    <joint name="imu_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="imu_link"/>
+        <origin xyz="0 0 0.01" rpy="0 0 0"/>
+    </joint>
+
+    <link name="imu_link">
+        <inertial>
+            <mass value="0.01"/>
+            <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <box size="0.01 0.01 0.005"/>
+            </geometry>
+            <material name="orange"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.01 0.01 0.005"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Gazebo Harmonic (gz-sim) reads this <sensor> tag natively.
+         Requires the world-level gz-sim-imu-system plugin (see worlds/warehouse.sdf) -->
+    <gazebo reference="imu_link">
+        <sensor name="imu_sensor" type="imu">
+            <pose>0 0 0 0 0 0</pose>
+            <topic>imu</topic>
+            <update_rate>100</update_rate>
+            <always_on>true</always_on>
+            <visualize>false</visualize>
+            <imu>
+                <angular_velocity>
+                    <x><noise type="gaussian"><mean>0</mean><stddev>0.0002</stddev></noise></x>
+                    <y><noise type="gaussian"><mean>0</mean><stddev>0.0002</stddev></noise></y>
+                    <z><noise type="gaussian"><mean>0</mean><stddev>0.0002</stddev></noise></z>
+                </angular_velocity>
+                <linear_acceleration>
+                    <x><noise type="gaussian"><mean>0</mean><stddev>0.017</stddev></noise></x>
+                    <y><noise type="gaussian"><mean>0</mean><stddev>0.017</stddev></noise></y>
+                    <z><noise type="gaussian"><mean>0</mean><stddev>0.017</stddev></noise></z>
+                </linear_acceleration>
+            </imu>
+        </sensor>
+    </gazebo>
+
+</robot>

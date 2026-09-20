@@ -1,0 +1,49 @@
+# Phase 4 -- Task 1 v9c "xy_err_weight 2.5->2.0". On top of E41's exact
+# recipe (arm-jitter penalty, permanent unconditional reward.py term; xy_err
+# anneal mechanism itself) -- but with the settle bonus explicitly disabled
+# (settle_bonus_w: 0.0) to reproduce E41's incentive landscape exactly,
+# since E43 found the settle bonus ALONE (introduced after E41, now
+# permanent/unconditional by default) reproduces most of v7's toggle/
+# collision regression -- it must be turned off for a clean "vary only
+# xy_err_weight" comparison against E41.
+#
+# One of 4 parallel variants testing higher START/END values for the
+# xy_err_weight anneal than E41's own 1.5->1.0. E41's own diagnostic flagged
+# that annealing all the way down to 1.0 may have softened the pull-toward-
+# the-hole gradient too much -- trading precision (min_xy_err mean rose
+# 5.7cm->6.4cm) for the stability win. Keeping both START and END higher
+# tests whether a stronger anneal keeps E41's stability gains while fixing
+# its precision regression. The 4 variants (v9a-d):
+#   v9a: 2.0 -> 1.0   (higher start, same end as E41's original range)
+#   v9b: 2.0 -> 1.5   (higher start, higher end)
+#   v9c: 2.5 -> 2.0   (even higher start, higher end)
+#   v9d: 2.5 -> 1.5   (even higher start, mid end)
+#
+# Fresh warm-start from E24 (matches E41's actual executed recipe, not this
+# file's precursor's stale "continue from E40" comment -- E41 was in fact
+# launched fresh from E24 after an initial-launch correction).
+phase: 4
+algo: ppo
+n_envs: 8
+frame_stack: 3
+cfg_overrides:
+  align_only: true
+settle_bonus_w: 0.0
+xy_err_weight_curriculum: true
+xy_err_weight_start: 2.5
+xy_err_weight_end: 2.0
+xy_err_weight_anneal_frac: 0.7
+total_timesteps: 2000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

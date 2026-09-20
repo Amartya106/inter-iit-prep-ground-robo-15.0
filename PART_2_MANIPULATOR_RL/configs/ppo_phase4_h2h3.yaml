@@ -1,0 +1,83 @@
+# Phase 4 -- E71/E72, H2+H3 combined (plan: parsed-plotting-allen.md).
+#
+# H1 (log_std reset through the warm-start chain) was tested exhaustively
+# tonight: ent_coef=0.0 briefly found real skill (success 0.07-0.08, depth
+# 0.0042-0.0048, steps 75k-110k) then the gripper collapsed to 0% grasps for
+# 446k steps with no recovery; ent_coef=0.003 was a clean, REPLICATED null
+# across two independent seeds (22/22 checkpoints identical to the
+# background floor); --soft-warm-start (fresh value net + optimiser) was
+# trending toward a third null at 53% when redirected here. H1 alone is not
+# a reliable fix on its own -- moving to the two structural hypotheses.
+#
+# H2 (manipularl/env.py, manipularl/rewards.py -- SHARED files, edited and
+# disclosed, 18/18 pytest re-verified): `peg_depth`/`depth` measures the
+# peg's CENTRE against the mouth plane. With _PEG_HEIGHT=8cm, the centre
+# only crosses the mouth after the TIP has already penetrated 4cm -- so
+# `_potential()`'s "+2.0*depth" term AND rewards.py's discrete
+# _DEPTH_PROGRESS_BONUS staircase (which read the same field) both paid
+# EXACTLY NOTHING for the entire rim-crossing and first 4cm of real
+# insertion. The only active gradient there was `-0.8*z_gap` fighting
+# `-1.5*xy_err`/`-1.2*tilt` on any contact-induced disturbance -- a ridge
+# whose expected value favours hovering over attempting descent by ~57:1
+# (worked calculation, the plan's own H2 section). Fixed: `peg_depth_shaped`
+# (the field `_potential()` and the progress-bonus staircase both actually
+# read) now tracks the peg's TIP instead of its centre. `peg_depth` itself
+# (the success predicate, every historical diagnostic) is UNCHANGED, byte-
+# for-byte, for comparability with all 69 prior KUKA Phase 4 experiments --
+# only the SHAPING signal moved. Verified numerically against a live
+# scripted-expert trajectory before launching: peg_depth_shaped ==
+# peg_depth + 0.0400 exactly (== _PEG_HEIGHT/2) on every sample checked.
+# The plan's third H2 sub-component (capping the rim-clip xy_err/tilt
+# penalty near the mouth) was NOT attempted this round -- flagged in the
+# plan itself as the highest theory-vs-practice risk; deferred to keep this
+# test's attribution clean (one well-understood structural fix, not two).
+#
+# H3 (same files): several quantities the REWARD already depends on were
+# never in the OBSERVATION -- peg_tilt_rad (weight 1.2 in the reward, only
+# recoverable by the network from rot6d(peg_quat) via a nonlinear arccos
+# transform, never read directly), min_ring_dist (drives a 1.5-weight
+# repulsion penalty, invisible otherwise), peg_depth_shaped itself (the
+# H2-fixed signal), a peg-TIP-to-hole vector (full-precision xy+depth in one
+# signal, vs. the existing centre-based `goal_pos-peg_pos`), and peg-vs-ring
+# CONTACT (flag + force, clipped to 50N) -- the one signal that could let
+# the policy distinguish "resting on the rim" from "entering the bore",
+# which was a genuine partial-observability gap, not just a coordinate
+# mismatch. 8 new dims (123 -> 131 per frame). Verified live: fires on a
+# realistic fraction of steps during real scripted-expert rollouts (~26.5%
+# episode-level ring-contact rate matches E55/E58's own historical measurement).
+#
+# Obs width change means NO checkpoint in this project can be warm-started
+# into this run (every saved model's first layer is shaped for 123*3=369,
+# this env now produces 131*3=393) -- FROM SCRATCH by necessity, not choice.
+# Standard hyperparameters (std starts healthy at 1.0 by construction, no
+# warm-start chain exists to ratchet it -- H1's entire failure mode is
+# structurally absent here). Budget doubled vs every warm-started attempt
+# (5M vs 2.5M) since there is no transferred reach/grasp/transit skill to
+# build on this time. n_envs raised to 16 for GPU throughput (observed
+# 900-1600fps in tonight's runs). PerDimStdLoggerCallback (train.py) still
+# active regardless of algo/warm-start status, so any in-run ratchet would
+# still be caught this time, not just a warm-start-inherited one.
+#
+#   python train.py --config configs/ppo_phase4_h2h3.yaml \
+#     --out-dir runs/phase4_ppo_h2h3
+#
+# Decision gate (per plan): E55 funnel (align_ok, enter_ok | align_ok), full
+# checkpoint sweep (not just final model), 200 episodes via evaluate.py.
+phase: 4
+algo: ppo
+n_envs: 16
+frame_stack: 3
+total_timesteps: 5000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

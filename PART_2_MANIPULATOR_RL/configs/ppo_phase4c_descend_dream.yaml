@@ -1,0 +1,57 @@
+# Phase 4 -- Task 1b/"descend", model-based "dreaming" (Part 2 of my
+# "generate dreams and train on those" plan, on top of Part 1's
+# replay-seeded curriculum).
+#
+# manipularl/world_model.py: a small MLP dynamics model, (obs, action) ->
+# (delta_obs, reward, done_logit), trained via scripts/
+# collect_dynamics_transitions.py + train_dynamics_model on ~13k random-
+# action transitions from descend_only (runs/dynamics_model.pt). Held-out
+# accuracy checked BEFORE use here: val_delta_mse=0.106 (standardized units,
+# ~89% of next-state variance explained), val_rew_mse=0.168. The done/
+# collision predictor's 99.5% accuracy is NOT meaningful (99.4% of the
+# training data is non-terminal -- a trivial always-not-done classifier
+# would score about the same) -- disclosed, not hidden.
+#
+# manipularl/callbacks.py's DreamAugmentCallback: each rollout, for 25% of
+# envs, branches from a real just-collected state and unrolls the dynamics
+# model 8 steps under the current policy, overwriting that many buffer
+# slots with the synthetic trajectory, then exactly re-derives GAE
+# advantages/returns over the whole mixed buffer. Verified via a direct
+# smoke test before this launch: confirmed buffer cells for the selected
+# dream envs actually change (both obs and reward), advantages/returns stay
+# finite, and model.learn() completes without error.
+#
+# Same base as the replay-seeded config (Part 1): descend_only, height
+# curriculum, replay_curriculum=0.3, arm_jitter_pen_w=2x (0.06).
+#
+# Warm-started from runs/phase3_ppo_best directly (Part 1's own run isn't
+# finished yet at launch time).
+phase: 4
+algo: ppo
+n_envs: 8
+frame_stack: 3
+cfg_overrides:
+  descend_only: true
+  max_steps: 150
+arm_jitter_pen_w: 0.06
+airspace_height_curriculum: true
+airspace_height_anneal_frac: 0.5
+replay_path: runs/replay_trajectory_e33.npz
+replay_curriculum: 0.3
+dream_model_path: runs/dynamics_model.pt
+dream_horizon: 8
+dream_env_frac: 0.25
+total_timesteps: 2000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

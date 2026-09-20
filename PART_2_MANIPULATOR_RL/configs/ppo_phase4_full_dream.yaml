@@ -1,0 +1,53 @@
+# Phase 4 -- the REAL monolithic task (reach -> grasp -> transit -> align ->
+# insert, cold-start each episode, max_steps=400), not a SeqPolicy sub-task.
+# This exact task has been stuck at 0.00cm depth across 5+ independent
+# attempts so far (E10/E16/E17/E28/E30) -- applying the
+# model-based "dreaming" mechanism (see E50's config for the mechanism
+# itself) here too, and dreaming a lot.
+#
+# Built on TWO fixes made specifically for this launch:
+#   1. manipularl/randomization.py's obstacle-keepout bugfix (see
+#      EXPERIMENTS.md's un-numbered bugfix entry) -- hole_xy's exclusion
+#      radius 0.10m->0.28m + a fallback fix, cutting unwinnable-by-
+#      construction near-hole episodes roughly in half. Not descend_only-
+#      specific -- benefits this monolithic task's align/insert legs too.
+#   2. A NEW dynamics model trained on 76,011 transitions from THIS task
+#      specifically (scripts/collect_dynamics_transitions.py --full-phase4,
+#      200 random-action episodes, all running the full 400 steps --
+#      done_rate=0.000, literally zero collision/termination examples in
+#      this dataset, since random actions from a cold start rarely wander
+#      into anything). Held-out check before use: val_delta_mse=0.064 (~94%
+#      of next-state variance explained), val_rew_mse=0.146. val_done_acc
+#      (0.9998) is NOT meaningful -- the done head learned nothing but
+#      "always predict not-terminal" from zero positive examples; imagined
+#      rollouts will naturally run their full horizon as a result, which is
+#      an acceptable, disclosed limitation (equivalent to "assume no
+#      collision during imagination" -- optimistic, not dangerous, since
+#      it's a training-signal augmentation, not the real environment).
+#
+# "Dream a lot": dream_env_frac raised to 0.5 (vs descend_only's 0.25) and
+# horizon to 10 (top of the plan's original 5-10 suggested range).
+#
+# Warm-started from runs/phase3_ppo_best (E48), the same base every
+# monolithic Phase 4 attempt so far has used.
+phase: 4
+algo: ppo
+n_envs: 8
+frame_stack: 3
+dream_model_path: runs/dynamics_model_full4.pt
+dream_horizon: 10
+dream_env_frac: 0.5
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

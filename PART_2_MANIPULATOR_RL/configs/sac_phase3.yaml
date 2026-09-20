@@ -1,0 +1,41 @@
+# Phase 3 - Obstacle-Aware, SAC.  Genuinely FROM SCRATCH -- SAC cannot
+# warm-start from any PPO checkpoint (different network architecture:
+# twin Q-critics + squashed-Gaussian actor vs PPO's actor-critic), so this
+# gets none of the P1->P2->P3 warm-start chain PPO has benefited from so
+# far. It DOES inherit the same env/reward (dense shaping, curricula,
+# collision-terminal, etc. -- all environment-side, algorithm-agnostic), so
+# the curriculum settings here mirror ppo_phase3.yaml to give it the same
+# bootstrapping help, which matters even more with no warm start at all.
+#
+# Prior evidence in this project: TQC (same off-policy family) struggled
+# with this exact class of hard-exploration gated-grasp problem on Phase 2
+# (E4, "the gamble") within a comparable step budget -- this run is a
+# genuine test of whether SAC does better on Phase 3 specifically, not an
+# expected win. 1M steps is a much smaller budget than PPO's warm-started
+# 2.5M+ runs; at this project's measured ~120-330 steps/s for the TQC/SAC
+# family on this CPU, expect several hours of wall-clock, not tens of
+# minutes.
+phase: 3
+algo: sac
+n_envs: 8
+frame_stack: 3
+grasp_curriculum: 0.35
+anneal_grasp_curriculum: true
+anneal_frac: 0.5
+obstacle_curriculum: true
+obstacle_curriculum_start: [0, 1]
+obstacle_curriculum_frac: 0.5
+total_timesteps: 1000000
+hyperparams:
+  learning_rate: 0.0003
+  buffer_size: 500000
+  batch_size: 256
+  tau: 0.005
+  gamma: 0.99
+  learning_starts: 10000
+  train_freq: 1
+  gradient_steps: 1   # keep gradient work low -- CPU torch throughput is
+                       # the bottleneck for this algorithm family here
+  ent_coef: auto
+  policy_kwargs:
+    net_arch: [256, 256]

@@ -1,0 +1,62 @@
+# Phase 4 -- R6, tests whether a rounder bore ring helps insertion.
+#
+# Direct follow-up to R5 (configs/ppo_phase4_r5_insertonly_scratch.yaml,
+# EXPERIMENTS.md E80), which isolated insertion precision from grasp
+# acquisition and obstacles and found a real, stable plateau: mean 0.073
+# (750k-2.5M, std 0.024, matching pure sampling noise at n=100). That
+# recipe used the default bore ring: 8 flat box segments forming an
+# octagon (cfg.hole_segments, manipularl/configs.py -- PyBullet has no
+# boolean/CSG cutout, so a true circle isn't possible, only a polygon
+# approximation of one). A user question ("can you make it circular")
+# prompted checking whether the octagon's flat facets and inter-segment
+# corners are themselves adding difficulty, independent of the 3mm radial
+# clearance that E55/E56 already identified as the dominant constraint.
+#
+# Every setting here is IDENTICAL to R5 except cfg_overrides.hole_segments
+# (8 -> 24, a much closer circle approximation) -- same insert_only
+# isolation, same zero obstacles, same from-scratch/no-warm-start, same
+# hyperparameters, same 2.5M budget, same seed default. This is the one
+# new variable, isolated, matching this project's own methodology
+# throughout (E13, R1-R5): change one thing, compare directly.
+#
+#   MANIPULARL_TORCH_THREADS=8 .venv_gpu_test/bin/python train.py \
+#     --config configs/ppo_phase4_r6_insertonly_hole24.yaml \
+#     --seed 0 --out-dir runs/phase4_r6_insertonly_hole24 \
+#     > logs/phase4_r6_insertonly_hole24.log 2>&1
+#
+# Decision gate: same checkpoint-sweep methodology as R5 (evaluate.py
+# --phase 4 --algo ppo --insert-only --episodes 100, every 250k-step
+# checkpoint from 250k to 2.5M). Compare the 750k-2.5M plateau mean/std
+# directly against R5's 0.073/0.024. A shift outside that noise band in
+# either direction is the real, informative result; anything inside it
+# means the ring's roundness was never the binding constraint, and the
+# 3mm clearance (or something else) still is.
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  insert_only: true
+  max_steps: 80
+  num_obstacles: 0
+  obstacle_min: 0
+  obstacle_max: 0
+  hole_segments: 24
+insert_start_depth_curriculum: true
+insert_start_depth_frac: 0.5
+satisficing_proximity: true
+risk_seeking_depth: true
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

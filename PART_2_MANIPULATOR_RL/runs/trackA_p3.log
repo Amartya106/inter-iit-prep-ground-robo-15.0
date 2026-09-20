@@ -1,0 +1,3 @@
+>>> 12:09:54 TRAIN phase3 TrackA (repulsion shaping + obstacle curriculum)
+>>> 12:52:58 train rc=0  OK
+>>> 12:55:00 TrackA phase3 eval: 3,in_dist,200,0.5,0.19,191.91,0.13480926977848992,0.16690764777412861,0.7180453413285274,0.0,nan

@@ -1,0 +1,3 @@
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.010 collision=0.500 steps=258 path_eff=0.17 depth=0.001 tilt=0.0
+[eval] wrote results/eval_phase4_full_dream_v2.csv

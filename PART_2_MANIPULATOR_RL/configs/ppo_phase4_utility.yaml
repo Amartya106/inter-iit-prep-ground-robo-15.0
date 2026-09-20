@@ -1,0 +1,61 @@
+# Phase 4 -- Utility-based RL test (arXiv:2402.02665), plan:
+# parsed-plotting-allen.md "Apply utility-based RL" revision.
+#
+# Base is configs/ppo_phase4_h2h3_surgery.yaml (E74's recipe: H2 depth-tip
+# fix + H3 richer observation, both unconditional in manipularl/env.py, on
+# top of the full cold-start monolithic task) -- unchanged budget/hypers.
+# Two new keys added on top:
+#   satisficing_proximity: true  (Sec 4.4, same mechanism as the Phase 3 test)
+#   risk_seeking_depth: true     (Sec 4.2, Phase-4-only -- caps the xy_err/
+#     tilt penalty portion of _potential()'s peg_in_hole branch while
+#     genuinely attempting entry, leaving the depth bonus uncapped; direct
+#     countermeasure to H2's own numerically-verified hover-vs-attempt
+#     ridge: verified directly against the real
+#     RewardComputer._potential(), which shows hovering's expected-value advantage
+#     over attempting descent narrows from 59.4x to 16.6x (-72%) with this
+#     flag on, using the exact state values from tonight's original ridge
+#     calculation.)
+#
+# Both new terms are reward-only (no observation-width change), so this
+# still needs the SAME warm-start surgery as E74 (H3 alone widened the obs
+# 123->131 dims/frame) -- warm_start_pad, not a plain --warm-start. Also
+# carries forward the still-unresolved normalization-mismatch fix (E78) and
+# the reinit-value-net + gripper-floor mechanisms (E76/plan v2), since those
+# are orthogonal layers, not competing hypotheses to choose between:
+#
+#   python train.py --config configs/ppo_phase4_utility.yaml \
+#     --warm-start-pad runs/phase3_ppo_best/model.zip \
+#     --warm-start-norm runs/phase3_ppo_best_padded/vecnormalize_real.pkl \
+#     --reinit-value-net \
+#     --log-std-min 0.3 --log-std-max 2.0 --log-std-min-grip 0.6 \
+#     --out-dir runs/phase4_utility
+#
+# Decision gate, same as every Phase 4 attempt this session: full checkpoint
+# sweep, evaluate.py --phase 4 --episodes 200 (no --insert-only -- real,
+# full cold-start task). Depth clearing meaningfully past the 0.001 floor on
+# ANY checkpoint is the bar; compare against E73's own 0.040/0.004 (the
+# standing-best real result of the whole KUKA Phase 4 investigation). Live
+# signal to watch early: grasp_failure_rate (E78's still-open question --
+# this run does NOT target that mechanism directly, it targets the
+# separate, also-real H2 ridge problem) and insert_depth_mean once/if
+# grasping happens at all.
+phase: 4
+algo: ppo
+n_envs: 16
+frame_stack: 3
+total_timesteps: 5000000
+satisficing_proximity: true
+risk_seeking_depth: true
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

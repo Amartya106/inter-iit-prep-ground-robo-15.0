@@ -1,0 +1,6 @@
+pybullet build time: Nov 28 2023 23:45:17
+  episode 1/4: steps=44 success=True
+  episode 2/4: steps=37 success=True
+  episode 3/4: steps=34 success=True
+  episode 4/4: steps=26 success=True
+[record] 4/4 successful -> media/phase3_e24.mp4

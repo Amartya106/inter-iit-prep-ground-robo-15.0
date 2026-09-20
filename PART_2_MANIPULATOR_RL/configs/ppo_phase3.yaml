@@ -1,0 +1,42 @@
+# Phase 3 - Obstacle-Aware.  PPO primary workhorse (this CPU's TQC grad-step cost
+# made a full off-policy curriculum infeasible in the time budget).
+#
+# Track-A pass (baseline eval 0.515, collision 0.28): the only obstacle signal
+# was a terminal collision penalty -- no per-step "veer away" gradient -- and
+# the P2 warm-start had never seen an obstacle. Adds:
+#   - dense obstacle-repulsion shaping (rewards.py _REPULSE_W/_REPULSE_MARGIN,
+#     from env._state_dict()'s min_obstacle_dist)
+#   - obstacle-count curriculum 0-1 -> 2-5 obstacles, annealed over 50% of
+#     training, so avoidance is learned progressively instead of cold
+# Result (E13): 0.50 success, 0.19 collision (down from 0.28) -- collision
+# avoidance worked, but success stayed flat because grasp_failure_rate was
+# 0.72. Run A of the grasp-miss-penalty A/B (see EXPERIMENTS.md / plan):
+# this config is unchanged from E13's; the fix is a permanent, always-on
+# addition to rewards.py (_GRASP_MISS_PEN, penalizes a failed grasp attempt
+# -- gripper closed too far from the peg), not a flag here. Run B
+# (configs/ppo_phase3_trigcurr.yaml) adds a grasp-trigger curriculum on top,
+# to isolate which lever actually moves grasp_failure_rate.
+phase: 3
+algo: ppo
+n_envs: 16
+frame_stack: 3
+grasp_curriculum: 0.35
+anneal_grasp_curriculum: true
+anneal_frac: 0.5
+obstacle_curriculum: true
+obstacle_curriculum_start: [0, 1]
+obstacle_curriculum_frac: 0.5
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

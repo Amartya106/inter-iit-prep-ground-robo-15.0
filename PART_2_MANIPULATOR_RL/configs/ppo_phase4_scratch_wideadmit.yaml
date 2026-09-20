@@ -1,0 +1,61 @@
+# Phase 4 -- R2, the parallel diagnostic to ppo_phase4_scratch_graspcurr.yaml
+# (R1). Identical in every respect except one: widens E79's grasp-
+# admissibility band (manipularl/configs.py's grasp_admit_axial_hi/lateral,
+# read in manipularl/env.py's _handle_grasp).
+#
+# Why this variant, not the others considered: _GRASP_SHAPE_W's dense
+# approach reward (manipularl/rewards.py, `near = exp(-d_ee_peg/0.08)`,
+# d_ee_peg = distance to the PEG'S CENTER) peaks exactly where the new
+# admissibility gate now REJECTS a grasp (the gate requires the flange
+# axially 1.5-5.5cm above center, not at it) -- verified by reading
+# rewards.py directly, not assumed. That mismatch, not the `in_danger`
+# reward gate (checked directly: it only suppresses the potential-based
+# `shaped` term, not `grasp_shape` -- no bug there), is R1's most likely
+# real failure mode. R2 tests whether widening the band (never lowering
+# axial_lo, which is what actually protects insert_success_depth
+# reachability) is enough to let the existing reward's natural pull land
+# inside the admissible region often enough for cold-start grasping to be
+# acquired at all.
+#
+# Same seed as R1 -- isolates the band width as the only variable.
+#
+#   MANIPULARL_TORCH_THREADS=4 .venv/bin/python train.py \
+#     --config configs/ppo_phase4_scratch_wideadmit.yaml \
+#     --seed 0 --out-dir runs/phase4_scratch_wideadmit \
+#     > logs/phase4_scratch_wideadmit.log 2>&1
+#
+# Same 1.0M/1.5M kill gate as R1. If R1 stalls (ever_grasped_rate < 0.15)
+# but R2 clears 0.40, the band was the binding constraint and the next
+# iteration re-centers grasp_shape on the admissible band instead of the
+# peg's center. If both stall, the blocker is upstream of E79 again.
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+grasp_curriculum: 0.7
+anneal_grasp_curriculum: true
+anneal_frac: 0.6
+satisficing_proximity: true
+risk_seeking_depth: true
+total_timesteps: 5000000
+cfg_overrides:
+  grasp_admit_axial_hi: 0.075     # was 0.055 -- widen the ceiling only
+  grasp_admit_lateral: 0.050      # was 0.035 -- widen the slack only
+  # grasp_admit_axial_lo stays 0.015 (default): widening axial_hi/lateral
+  # only makes MORE approach poses admissible; it cannot re-open the
+  # "flange too low, insert depth physically unreachable" failure
+  # _GRASP_OFFSET_Z exists to prevent -- only lowering axial_lo could do
+  # that, and axial_lo is deliberately left untouched here.
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.008
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

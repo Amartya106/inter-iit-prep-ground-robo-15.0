@@ -1,0 +1,11 @@
+pybullet build time: Nov 28 2023 23:45:17
+[collect_mpc] planner: horizon=6 n_candidates=256 n_elites=32 n_iters=8, model=runs/dynamics_model_full4.pt
+  10/60 episodes, 0 success, 0 transitions kept, 12.7s/ep, ETA 10.6min
+  20/60 episodes, 0 success, 0 transitions kept, 10.0s/ep, ETA 6.7min
+  30/60 episodes, 1 success, 10 transitions kept, 9.4s/ep, ETA 4.7min
+  40/60 episodes, 1 success, 10 transitions kept, 10.2s/ep, ETA 3.4min
+  50/60 episodes, 1 success, 10 transitions kept, 9.5s/ep, ETA 1.6min
+  60/60 episodes, 1 success, 228 transitions kept, 9.6s/ep, ETA 0.0min
+
+[collect_mpc] CEM planner 1/60 = 2% success
+[collect_mpc] kept 228 transitions (obs dim 369) -> runs/demos_phase4_mpc/demos.npz

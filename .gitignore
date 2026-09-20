@@ -1,0 +1,23 @@
+# Python virtual environments (installed packages, not source, ~13GB total,
+# fully reproducible via `pip install -r requirements.txt`)
+.venv/
+.venv_gpu_test/
+.venv_gail_test/
+
+# early scratch/debug logs, not part of the actual submission
+.work/
+
+# Python bytecode caches
+__pycache__/
+*.pyc
+
+# this one file exceeds GitHub's 100MB hard push limit and will be rejected
+# otherwise: raw collected demo transitions for an abandoned behavior-cloning
+# experiment, not part of any reported result
+PART_2_MANIPULATOR_RL/runs/multi_expert_demos/demos.npz
+
+# build output, not source (anchored to repo root only -- a bare "*.zip"
+# would also match every trained checkpoint, which are genuinely saved as
+# model.zip throughout runs/, and that is real content, not build output)
+/*.zip
+/_dist/

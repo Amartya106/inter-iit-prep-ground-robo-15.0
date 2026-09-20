@@ -1,0 +1,70 @@
+# Phase 3 -- Utility-based RL test (arXiv:2402.02665, Sec 4.4 "Satisficing
+# agents"), plan: parsed-plotting-allen.md "Apply utility-based RL" revision.
+#
+# Identical to configs/ppo_phase3.yaml -- the canonical recipe that produced
+# this project's entire winning Phase 3 lineage (E13 Run A -> E24 -> E48 ->
+# the adopted 40k-step checkpoint, runs/phase3_ppo_best, 0.80/0.175) -- with
+# exactly ONE new key added: satisficing_proximity: true. Everything else
+# (grasp_curriculum, obstacle_curriculum, hyperparams, warm-start source)
+# stays byte-identical to that recipe so this run isolates the new reward
+# term as the only variable, matching every other A/B in this project's
+# history (EXPERIMENTS.md's own established discipline).
+#
+# satisficing_proximity replaces the continuously-scaled repulsion penalty's
+# shaping-suppression companion (`in_danger`, rewards.py) with a two-tier
+# structure: outside _REPULSE_MARGIN, proximity costs nothing at all (as
+# today); inside it, the existing scaled penalty is unchanged, but goal-
+# shaping suppression only activates within a TIGHTER sub-threshold
+# (_SATISFICING_SUPPRESS_FRAC=0.5 of the margin) instead of the full margin
+# -- cutting the false-positive suppression zone (a continuously-scaled
+# danger signal was silencing goal-approach shaping far past the region
+# that's actually dangerous) rather than the real one. Default False
+# (today's exact behavior); this run explicitly opts in.
+#
+# Warm-started from runs/phase2_ppo, the same base every Phase 3 attempt in
+# this project's history has used -- but via --warm-start-pad, not a plain
+# --warm-start: smoke-testing this config discovered that H3's observation
+# widening (123->131 dims/frame) is a manipularl/env.py-level change, not a
+# Phase-4-only one (the same ManipulaRLEnv class/obs assembly is shared by
+# every phase), so runs/phase2_ppo/vecnormalize.pkl (369=123*3-wide, fit
+# before H3) is ALSO now obs-width-incompatible with a plain warm-start --
+# confirmed directly (VecNormalize.load -> "AssertionError: spaces must
+# have the same shape", 369 vs 393). warm_start_pad() is phase-agnostic
+# (just needs old_d=123/frame_stack, which phase2_ppo's checkpoint has), so
+# the exact same surgery E73/E74 used for Phase 4 applies here unchanged.
+# No --warm-start-norm (matches this session's own established pattern:
+# every warm_start_pad run so far used a fresh mean=0/var=1 VecNormalize,
+# not a padded one, since a real padded VecNormalize for phase2_ppo
+# specifically was never built -- only phase3_ppo_best's was).
+#
+#   python train.py --config configs/ppo_phase3_satisficing.yaml \
+#     --warm-start-pad runs/phase2_ppo/model.zip \
+#     --out-dir runs/phase3_satisficing
+#
+# Compared against KUKA Phase 3's own peak-checkpoint precedent (0.80/0.175,
+# runs/phase3_ppo_best) via a full checkpoint sweep, not final-model-only.
+phase: 3
+algo: ppo
+n_envs: 16
+frame_stack: 3
+grasp_curriculum: 0.35
+anneal_grasp_curriculum: true
+anneal_frac: 0.5
+obstacle_curriculum: true
+obstacle_curriculum_start: [0, 1]
+obstacle_curriculum_frac: 0.5
+satisficing_proximity: true
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

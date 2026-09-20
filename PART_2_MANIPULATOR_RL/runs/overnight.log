@@ -1,0 +1,7 @@
+>>> 16:06:35  === OVERNIGHT START  torch_threads=10 ===
+>>> 16:06:35  TRAIN TQC-p1  (configs/phase1.yaml -> runs/phase1_tqc)
+>>> 17:31:48  TRAIN TQC-p1  rc=0  model.zip OK
+>>> 17:31:48  EVAL runs/phase1_tqc  phase=1 algo=tqc
+>>> 17:32:01  EVAL runs/phase1_tqc  rc=0
+1,in_dist,200,0.935,0.0,24.115,0.9636118964024157,0.07155355264655026,0.0,0.0,nan
+>>> 17:32:01  TRAIN TQC-p2  (configs/phase2.yaml -> runs/phase2_tqc)

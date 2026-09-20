@@ -1,0 +1,60 @@
+# Phase 4 -- 10M-step SAC, from scratch, on the current (H2+H3-fixed)
+# environment/reward. Filename kept "ppo_"-prefixed only for directory
+# consistency with this session's other new Phase 4 configs; algo is SAC.
+#
+# Different angle from tonight's PPO work: SAC's ent_coef="auto" adapts a
+# temperature parameter via gradient descent toward a target entropy
+# (-action_dim by SB3's default), rather than PPO's FIXED ent_coef applying
+# a constant, one-directional +1/dim gradient on log_std with nothing
+# opposing it unless a policy-gradient signal happens to exist on that
+# dimension. That fixed-scalar mechanism was tonight's central diagnosis
+# (the wrist-noise ratchet through the warm-start chain) and, even after
+# building tooling to manage it directly (--reset-log-std,
+# LogStdBandClamp), produced two DIFFERENT failure modes at the two
+# ent_coef values tried (0.0: permanent gripper collapse; 0.003, two
+# seeds: never discovers grasping). SAC's auto-entropy is a structurally
+# different mechanism -- it can't run away unopposed (pulled toward a
+# target, not pushed by a constant) and can't permanently collapse to zero
+# the way ent_coef=0.0 did (same reason). Worth testing on its own terms,
+# not as a variant of tonight's PPO experiments.
+#
+# From scratch (not warm-started): SAC's own network shapes/replay buffer
+# aren't compatible with anything already trained tonight (different algo
+# family entirely -- PPO's on-policy actor-critic vs SAC's off-policy
+# twin-Q + replay buffer), so this is a clean, independent baseline attempt
+# rather than a transfer test. H2 (tip-based peg_depth_shaped) and H3 (8
+# richer observation dims) are environment-level fixes already merged into
+# manipularl/env.py/rewards.py -- this run gets them automatically, no
+# config flag needed, same as every other Phase 4 attempt since they
+# landed.
+#
+# net_arch [256,256] (this project's PPO convention, not phase4.yaml's
+# lean [128,128]/CPU-throughput-constrained choice -- GPU makes the larger
+# net affordable here, confirmed all night: device="auto" resolves to cuda
+# and every PPO run tonight used it). buffer_size raised to 1M (600k would
+# only cover the last 6% of a 10M-step run's experience).
+#
+#   python train.py --config configs/ppo_phase4_sac_scratch.yaml \
+#     --out-dir runs/phase4_sac_scratch
+#
+# Decision gate: full checkpoint sweep (not final model), evaluate.py
+# --phase 4 --algo sac --episodes 200. Compare against tonight's floor
+# (success 0.01-0.02/depth 0.001, 44/44 prior PPO checkpoints) and E73's
+# 0.040/0.004 (the best result of the investigation so far).
+phase: 4
+algo: sac
+n_envs: 12
+frame_stack: 3
+total_timesteps: 10000000
+hyperparams:
+  learning_rate: 0.0003
+  buffer_size: 1000000
+  batch_size: 256
+  tau: 0.005
+  gamma: 0.99
+  learning_starts: 15000
+  train_freq: 1
+  gradient_steps: 2
+  ent_coef: auto
+  policy_kwargs:
+    net_arch: [256, 256]

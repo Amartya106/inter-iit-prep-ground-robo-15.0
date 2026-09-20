@@ -1,0 +1,8 @@
+>>> 13:14:43 waiting for phase3 TrackB finetune (399271) to finish
+>>> 15:33:46 phase3 TrackB finetune train done, OK
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/evaluate.py:126: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=float(np.nanmean(arr["insert_tilt_deg"])),
+[       in_dist] success=0.000 collision=0.220 steps=350 path_eff=0.05 depth=0.000 tilt=nan
+[eval] wrote results/eval_phase3_bc_finetune.csv
+>>> 15:35:38 phase3 TrackB eval: 3,in_dist,200,0.0,0.22,350.0,0.054410438368958466,0.6647126520813699,0.9972552811457851,0.0,nan

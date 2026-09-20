@@ -1,0 +1,55 @@
+# Phase 4 -- Task 1 of a SeqPolicy-style task decomposition (pick / align /
+# insert as separate sub-policies rather than one monolithic policy -- see
+# https://www.sciopen.com/article/10.26599/AIR.2024.9150043; I split the
+# task along those lines). This task is "reach + grasp + avoid obstacles +
+# transit to directly-above-the-hole, xy/tilt-aligned" -- i.e. everything
+# Phase 4 needs EXCEPT the final push-through, which Task 2
+# (ppo_phase4b_insert.yaml) owns exclusively.
+#
+# cfg_overrides.align_only=True changes ONLY the success predicate
+# (rewards.py's _success(), peg_in_hole+align_only branch): success/
+# termination is now "xy_err < insert_xy_tol AND tilt < insert_tilt_tol_deg
+# AND grasped, held for insert_hold_steps" -- the REAL (not the loosened 3x)
+# tolerance, no depth requirement at all. Scene/reward-shaping/obstacles are
+# all unchanged from ordinary Phase 4.
+#
+# Warm-started from E24 (Phase 3's final best, 0.765/0.195) -- diagnostics
+# (E28, E30) already show this sub-skill is largely present (92% of grasped
+# episodes get within 10cm xy, best single episode 0.29cm) but not yet
+# reliably held to the TIGHT insert_xy_tol (1cm) -- this run's job is to
+# close that gap and produce a genuinely reliable Task-1 policy for the
+# handoff to Task 2.
+#
+# grasp_curriculum RE-ADDED after the first attempt (0/200, grasp_failure_
+# rate 0.93): traced via a per-episode grasp-event log and found the policy
+# rapidly cycling GRASP->DROP->GRASP->DROP every 1-2 steps, not "never
+# grasping" -- caused by the new _GRASP_OFFSET_Z fix (peg now hangs 3.5cm
+# lower post-grasp than the zero-offset physics Phase 3's warm-started
+# weights were trained under), with NO curriculum bootstrap to help the
+# inherited grasp-hold skill re-adapt to the shifted post-grasp feel, cold.
+# 0.5 annealed to 0 over the first 40% gives it pre-grasped-start exposure
+# to holding under the NEW geometry before it has to discover grasping
+# itself under it.
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  align_only: true
+grasp_curriculum: 0.5
+anneal_grasp_curriculum: true
+anneal_frac: 0.4
+total_timesteps: 2000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

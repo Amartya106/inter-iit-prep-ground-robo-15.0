@@ -1,0 +1,101 @@
+# Phase 4 -- E77, relaxed & DISCLOSED success criterion + grasp_curriculum
+# (plan: parsed-plotting-allen.md). User-directed: make success easier, and
+# say so plainly in every result this produces.
+#
+# ============================================================================
+# DISCLOSURE: this run scores episodes against a RELAXED, NON-OFFICIAL
+# success predicate, different from the one used in every one of this
+# project's 70+ prior Phase 4 experiments:
+#
+#     field                  | official | relaxed (THIS run)
+#     insert_success_depth   |   3cm    |   1cm
+#     insert_xy_tol          |   1cm    |   2cm
+#     insert_tilt_tol_deg    |   10 deg |   30 deg
+#     insert_hold_steps      |   10     |   1 (instantaneous touch)
+#
+# Every number this run produces is reported as "(relaxed X / official Y)",
+# both together, never the relaxed one alone. `_success()` also has a
+# known, pre-existing quirk (found this session, E65-era diagnosis): it
+# never checks `grasped`. An easier bar makes the already-observed
+# "ungrasped peg tumbles near the hole" artifact from earlier tonight's
+# diagnostics (Step 0: 0/3 successes were actually grasped at the moment of
+# success) MORE likely to register as a hit, not less -- any relaxed
+# "success" here is cross-checked against whether the episode ever actually
+# held a grasp, and that check is reported alongside the headline number.
+# ============================================================================
+#
+# WHY THIS ISN'T A REPEAT OF E64: E64 (before tonight) already tested
+# "relax the insertion tolerance and re-eval the same checkpoint"
+# (depth 3->1.5cm, xy 1->1.5cm, tilt 10->20deg, hold 10->5) on E51, the
+# then-standing-best checkpoint, and found "relaxing the finish line moved
+# success by exactly 0.000 everywhere" -- mechanically inevitable, not a
+# fluke, because max_depth was recorded as 0.0000 across essentially every
+# episode: a relaxed THRESHOLD on a variable that is exactly zero still
+# fails under any positive threshold. Tonight's own checkpoints (44+
+# formally swept, every one) sit at the identical depth~=0.001 floor, for
+# the same underlying reason -- every cold-start-grasping variant tried
+# tonight (E74 full task, E75 Align, E76 repaired-critic+protected-
+# exploration) converged on grasp_failure_rate ~= 1.0 for the ENTIRE
+# training run: the policy never grasps at all, so nothing downstream is
+# ever reached regardless of where the finish line sits. Relaxing ONLY the
+# insertion tolerance again would just be E64's null result restated on a
+# new checkpoint with the same zero, not a new experiment.
+#
+# So this run pairs the relaxed predicate with the one thing that can
+# actually let it be reached: grasp_curriculum (manipularl/callbacks.py's
+# GraspCurriculumAnneal, already-built, no new code) bootstraps HALF of
+# TRAINING episodes to start pre-grasped, annealed to fully cold-start by
+# the midpoint -- giving the (now relaxed) insertion skill real, dense
+# training exposure instead of depending entirely on cold-start grasp
+# discovery. VERIFIED by reading evaluate.py: eval is UNAFFECTED by this
+# regardless of the training schedule (build_eval_env never passes
+# grasp_curriculum, so eval always falls back to PhaseConfig's own default,
+# 0.0, cold-start) -- the eval number this produces is not inflated by the
+# training aid, it measures the same cold-start eval every other Phase 4
+# number in this project's history measures, just against a looser bar.
+#
+# Full recipe underneath is tonight's fully-verified one, unchanged:
+#
+#   python train.py --config configs/ppo_phase4_h2h3_surgery_relaxed.yaml \
+#     --warm-start-pad runs/phase3_ppo_best/model.zip --reinit-value-net \
+#     --log-std-min 0.3 --log-std-max 2.0 --log-std-min-grip 0.6 \
+#     --out-dir runs/phase4_h2h3_surgery_relaxed
+#
+# Live signal to watch early: grasp_failure_rate should move off ~1.0
+# DURING the curriculum's pre-grasped-start window -- if it doesn't even
+# move while episodes start pre-grasped for it, that's informative on its
+# own (the bottleneck survives a direct bootstrap past it) and worth
+# flagging before the run finishes, not something to relax further.
+#
+# Eval: every checkpoint gets evaluate.py run TWICE -- once unmodified
+# (official predicate) and once with --cfg-json
+# '{"insert_success_depth":0.01,"insert_xy_tol":0.02,"insert_tilt_tol_deg":30,"insert_hold_steps":1}'
+# (relaxed, evaluate.py's own already-supported generic override flag,
+# built for exactly this "Stage-1/E56 fixed-env track" use case). Report
+# both, always together.
+phase: 4
+algo: ppo
+n_envs: 16
+frame_stack: 3
+cfg_overrides:
+  insert_success_depth: 0.01
+  insert_xy_tol: 0.02
+  insert_tilt_tol_deg: 30.0
+  insert_hold_steps: 1
+grasp_curriculum: 0.5
+anneal_grasp_curriculum: true
+anneal_frac: 0.5
+total_timesteps: 5000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

@@ -1,0 +1,11 @@
+pybullet build time: Nov 28 2023 23:45:17
+
+N=200
+stage1_aligned (handed off to Task 2): 0.015
+overall success: 0.000
+collision_rate: 0.390
+mean_steps: 284.5
+insert_depth_mean: 0.00000
+insert_tilt_deg_mean: 0.00
+grasp_failure_rate (stage 2 only): 0.012
+[eval] wrote results/eval_phase4_composed_specialist_team.csv

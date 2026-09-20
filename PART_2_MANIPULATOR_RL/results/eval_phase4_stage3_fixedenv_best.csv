@@ -1,0 +1,2 @@
+n,success_rate,collision_rate,mean_steps,path_efficiency,final_pos_error,grasp_failure_rate,insert_depth_mean,insert_tilt_deg_mean
+200,0.015,0.495,264.655,0.15462471796773822,0.38813919864661967,0.9349655676016824,0.0009004923423001146,0.04453626674409507

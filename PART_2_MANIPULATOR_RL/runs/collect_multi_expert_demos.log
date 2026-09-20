@@ -1,0 +1,24 @@
+pybullet build time: Nov 28 2023 23:45:17
+  [E41-align] ep 0/80, 400 steps so far
+  [E41-align] ep 25/80, 9381 steps so far
+  [E41-align] ep 50/80, 17602 steps so far
+  [E41-align] ep 75/80, 25144 steps so far
+[E41-align] collected 26378 (raw_obs, action) pairs
+  [E33-insert] ep 0/80, 81 steps so far
+  [E33-insert] ep 25/80, 2935 steps so far
+  [E33-insert] ep 50/80, 5872 steps so far
+  [E33-insert] ep 75/80, 11062 steps so far
+[E33-insert] collected 11879 (raw_obs, action) pairs
+  [E51-full] ep 0/150, 400 steps so far
+  [E51-full] ep 25/150, 8231 steps so far
+  [E51-full] ep 50/150, 15698 steps so far
+  [E51-full] ep 75/150, 22415 steps so far
+  [E51-full] ep 100/150, 29487 steps so far
+  [E51-full] ep 125/150, 36788 steps so far
+[E51-full] collected 42812 (raw_obs, action) pairs
+
+[collect] combined: 81069 transitions, obs_dim=369, act_dim=8
+  E41-align: 26378 transitions (32.5%)
+  E33-insert: 11879 transitions (14.7%)
+  E51-full: 42812 transitions (52.8%)
+[collect] saved runs/multi_expert_demos/demos.npz (normalized obs) and runs/multi_expert_demos/vecnormalize.pkl

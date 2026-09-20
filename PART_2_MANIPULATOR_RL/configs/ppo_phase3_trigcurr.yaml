@@ -1,0 +1,39 @@
+# Phase 3 - Obstacle-Aware.  Run B of the grasp-miss-penalty A/B (see
+# EXPERIMENTS.md / plan): identical to ppo_phase3.yaml (which both Run A and
+# Run B share, since the grasp-miss penalty itself is a permanent reward.py
+# change, not a flag) plus a grasp-trigger curriculum -- the EE-peg catch
+# radius for a gripper-close to actually form the grasp constraint starts
+# generous at 15cm and anneals down to the real 9cm (_GRASP_TRIGGER) over
+# 50% of training. Eval always uses the real 9cm (curriculum only ever
+# touches split=="train" envs). Motivated by E13's grasp_failure_rate=0.72:
+# most grasp attempts fail outright (EE not quite in range), so widening the
+# catch net early gives fast positive signal on grasp *timing* while the
+# obstacle-avoidance-induced approach deflection is still being learned.
+phase: 3
+algo: ppo
+n_envs: 16
+frame_stack: 3
+grasp_curriculum: 0.35
+anneal_grasp_curriculum: true
+anneal_frac: 0.5
+obstacle_curriculum: true
+obstacle_curriculum_start: [0, 1]
+obstacle_curriculum_frac: 0.5
+grasp_trigger_curriculum: true
+grasp_trigger_start_cm: 15
+grasp_trigger_end_cm: 9
+grasp_trigger_frac: 0.5
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

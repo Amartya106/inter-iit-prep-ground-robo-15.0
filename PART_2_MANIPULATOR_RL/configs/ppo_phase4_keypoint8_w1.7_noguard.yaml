@@ -1,0 +1,36 @@
+# Phase 4 -- keypoint "docking" reward test, NO-GUARD companion to
+# ppo_phase4_keypoint8_w1.7.yaml. Identical in every respect (keypoint_n=8,
+# keypoint_w=1.7, warm-started from runs/phase4_full_dream/E51, no dreaming,
+# same hyperparams) EXCEPT this one omits `target_kl` entirely, reproducing
+# PPO's fully unconstrained default (SB3 default target_kl=None -- the SAME
+# behavior E57's own retrain had, which showed approx_kl=0.81 vs a healthy
+# ~0.01-0.05 late in training).
+#
+# Run in PARALLEL with the guarded version specifically to isolate the
+# guard's own effect -- was it actually necessary for THIS reward change, or
+# would training have been fine without it too? The guarded run's own smoke
+# test already showed approx_kl hitting ~0.09-0.13 and early-stopping firing
+# almost every iteration, so this run is expected to let that drift go
+# further, unconstrained, for the full 2.5M steps -- that's the point of the
+# comparison, not an oversight.
+phase: 4
+algo: ppo
+n_envs: 8
+frame_stack: 3
+keypoint_w: 1.7
+cfg_overrides:
+  keypoint_n: 8
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

@@ -1,0 +1,272 @@
+pybullet build time: Nov 28 2023 23:45:17
+[train] phase=3 algo=ppo n_envs=12 steps=10,000 frame_stack=3 -> runs/phase3_ppo_v8_jitter_seg40to50
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+pybullet build time: Nov 28 2023 23:45:17
+[train] warm-starting from runs/phase3_ppo_v8_jitter_ultrafine/checkpoints/model_39984_steps.zip
+[train] grasp-curriculum anneal 0.35 -> 0.0 over 50% of training
+[train] obstacle-count curriculum (0, 1) -> (2, 5) over 50% of training
+Logging to runs/phase3_ppo_v8_jitter_seg40to50/tb/PPO_1
+Eval num_timesteps=996, episode_reward=51.85 +/- 22.89
+Episode length: 50.90 +/- 40.17
+------------------------------------
+| eval/                 |          |
+|    mean_ep_length     | 50.9     |
+|    mean_reward        | 51.8     |
+| manipularl/           |          |
+|    collision_rate     | 0.438    |
+|    grasp_curriculum   | 0.281    |
+|    grasp_failure_rate | 0.53     |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 2        |
+|    obstacle_range_lo  | 0        |
+|    success_rate       | 0.562    |
+| time/                 |          |
+|    total_timesteps    | 996      |
+------------------------------------
+New best mean reward!
+Eval num_timesteps=1992, episode_reward=38.23 +/- 32.14
+Episode length: 37.90 +/- 20.58
+------------------------------------
+| eval/                 |          |
+|    mean_ep_length     | 37.9     |
+|    mean_reward        | 38.2     |
+| manipularl/           |          |
+|    collision_rate     | 0.258    |
+|    grasp_curriculum   | 0.211    |
+|    grasp_failure_rate | 0.569    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 3        |
+|    obstacle_range_lo  | 1        |
+|    success_rate       | 0.742    |
+| time/                 |          |
+|    total_timesteps    | 1992     |
+------------------------------------
+Eval num_timesteps=2988, episode_reward=50.88 +/- 22.90
+Episode length: 38.30 +/- 20.23
+------------------------------------
+| eval/                 |          |
+|    mean_ep_length     | 38.3     |
+|    mean_reward        | 50.9     |
+| manipularl/           |          |
+|    collision_rate     | 0.182    |
+|    grasp_curriculum   | 0.142    |
+|    grasp_failure_rate | 0.527    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 3        |
+|    obstacle_range_lo  | 1        |
+|    success_rate       | 0.818    |
+| time/                 |          |
+|    total_timesteps    | 2988     |
+------------------------------------
+Eval num_timesteps=3984, episode_reward=40.29 +/- 31.28
+Episode length: 77.30 +/- 94.00
+------------------------------------
+| eval/                 |          |
+|    mean_ep_length     | 77.3     |
+|    mean_reward        | 40.3     |
+| manipularl/           |          |
+|    collision_rate     | 0.153    |
+|    grasp_curriculum   | 0.072    |
+|    grasp_failure_rate | 0.566    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 4        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.847    |
+| time/                 |          |
+|    total_timesteps    | 3984     |
+------------------------------------
+Eval num_timesteps=4980, episode_reward=36.07 +/- 30.77
+Episode length: 43.30 +/- 25.74
+------------------------------------
+| eval/                 |          |
+|    mean_ep_length     | 43.3     |
+|    mean_reward        | 36.1     |
+| manipularl/           |          |
+|    collision_rate     | 0.181    |
+|    grasp_curriculum   | 0.00224  |
+|    grasp_failure_rate | 0.638    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 5        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.771    |
+| time/                 |          |
+|    total_timesteps    | 4980     |
+------------------------------------
+Eval num_timesteps=5976, episode_reward=43.50 +/- 28.06
+Episode length: 50.80 +/- 48.49
+------------------------------------
+| eval/                 |          |
+|    mean_ep_length     | 50.8     |
+|    mean_reward        | 43.5     |
+| manipularl/           |          |
+|    collision_rate     | 0.16     |
+|    grasp_curriculum   | 0        |
+|    grasp_failure_rate | 0.688    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 5        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.8      |
+| time/                 |          |
+|    total_timesteps    | 5976     |
+------------------------------------
+------------------------------------
+| manipularl/           |          |
+|    collision_rate     | 0.12     |
+|    grasp_curriculum   | 0        |
+|    grasp_failure_rate | 0.681    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 5        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.84     |
+| rollout/              |          |
+|    ep_len_mean        | 54.6     |
+|    ep_rew_mean        | 49.2     |
+| time/                 |          |
+|    fps                | 391      |
+|    iterations         | 1        |
+|    time_elapsed       | 15       |
+|    total_timesteps    | 6144     |
+------------------------------------
+Eval num_timesteps=6972, episode_reward=40.56 +/- 42.00
+Episode length: 73.35 +/- 84.82
+----------------------------------------
+| eval/                   |            |
+|    mean_ep_length       | 73.3       |
+|    mean_reward          | 40.6       |
+| manipularl/             |            |
+|    collision_rate       | 0.16       |
+|    grasp_curriculum     | 0          |
+|    grasp_failure_rate   | 0.72       |
+|    insert_depth_mean    | 0          |
+|    obstacle_range_hi    | 5          |
+|    obstacle_range_lo    | 2          |
+|    success_rate         | 0.8        |
+| time/                   |            |
+|    total_timesteps      | 6972       |
+| train/                  |            |
+|    approx_kl            | 0.06659973 |
+|    clip_fraction        | 0.331      |
+|    clip_range           | 0.2        |
+|    entropy_loss         | -17.3      |
+|    explained_variance   | 0.794      |
+|    learning_rate        | 0.0003     |
+|    loss                 | 18.6       |
+|    n_updates            | 13350      |
+|    policy_gradient_loss | -0.0588    |
+|    std                  | 3.29       |
+|    value_loss           | 54.1       |
+----------------------------------------
+Eval num_timesteps=7968, episode_reward=46.11 +/- 26.08
+Episode length: 51.60 +/- 27.60
+------------------------------------
+| eval/                 |          |
+|    mean_ep_length     | 51.6     |
+|    mean_reward        | 46.1     |
+| manipularl/           |          |
+|    collision_rate     | 0.16     |
+|    grasp_curriculum   | 0        |
+|    grasp_failure_rate | 0.798    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 5        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.79     |
+| time/                 |          |
+|    total_timesteps    | 7968     |
+------------------------------------
+Eval num_timesteps=8964, episode_reward=49.31 +/- 27.47
+Episode length: 51.70 +/- 69.25
+------------------------------------
+| eval/                 |          |
+|    mean_ep_length     | 51.7     |
+|    mean_reward        | 49.3     |
+| manipularl/           |          |
+|    collision_rate     | 0.16     |
+|    grasp_curriculum   | 0        |
+|    grasp_failure_rate | 0.82     |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 5        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.82     |
+| time/                 |          |
+|    total_timesteps    | 8964     |
+------------------------------------
+Eval num_timesteps=9960, episode_reward=50.59 +/- 25.18
+Episode length: 71.20 +/- 77.05
+------------------------------------
+| eval/                 |          |
+|    mean_ep_length     | 71.2     |
+|    mean_reward        | 50.6     |
+| manipularl/           |          |
+|    collision_rate     | 0.13     |
+|    grasp_curriculum   | 0        |
+|    grasp_failure_rate | 0.829    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 5        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.86     |
+| time/                 |          |
+|    total_timesteps    | 9960     |
+------------------------------------
+Eval num_timesteps=10956, episode_reward=44.42 +/- 28.56
+Episode length: 54.30 +/- 23.57
+------------------------------------
+| eval/                 |          |
+|    mean_ep_length     | 54.3     |
+|    mean_reward        | 44.4     |
+| manipularl/           |          |
+|    collision_rate     | 0.16     |
+|    grasp_curriculum   | 0        |
+|    grasp_failure_rate | 0.846    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 5        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.82     |
+| time/                 |          |
+|    total_timesteps    | 10956    |
+------------------------------------
+Eval num_timesteps=11952, episode_reward=41.65 +/- 30.51
+Episode length: 91.95 +/- 99.29
+------------------------------------
+| eval/                 |          |
+|    mean_ep_length     | 92       |
+|    mean_reward        | 41.7     |
+| manipularl/           |          |
+|    collision_rate     | 0.13     |
+|    grasp_curriculum   | 0        |
+|    grasp_failure_rate | 0.841    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 5        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.85     |
+| time/                 |          |
+|    total_timesteps    | 11952    |
+------------------------------------
+------------------------------------
+| manipularl/           |          |
+|    collision_rate     | 0.13     |
+|    grasp_curriculum   | 0        |
+|    grasp_failure_rate | 0.846    |
+|    insert_depth_mean  | 0        |
+|    obstacle_range_hi  | 5        |
+|    obstacle_range_lo  | 2        |
+|    success_rate       | 0.84     |
+| rollout/              |          |
+|    ep_len_mean        | 51.1     |
+|    ep_rew_mean        | 50.8     |
+| time/                 |          |
+|    fps                | 342      |
+|    iterations         | 2        |
+|    time_elapsed       | 35       |
+|    total_timesteps    | 12288    |
+------------------------------------
+[train] saved runs/phase3_ppo_v8_jitter_seg40to50/model.zip and runs/phase3_ppo_v8_jitter_seg40to50/vecnormalize.pkl

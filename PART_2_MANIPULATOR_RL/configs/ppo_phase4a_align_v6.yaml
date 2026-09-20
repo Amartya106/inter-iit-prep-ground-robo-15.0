@@ -1,0 +1,47 @@
+# Phase 4 -- Task 1 v6/"align". Builds on E35/E36's un-regression fix and
+# E40's grasp-drop-penalty (now a permanent, unconditional reward.py term,
+# same as _RING_REPULSE_* -- no config toggle needed) with two further
+# additions:
+#
+# 1. Arm-jitter penalty (rewards.py's _ARM_JITTER_THRESH/_ARM_JITTER_PEN_W,
+#    permanent peg_in_hole+grasped term, no config toggle) -- targets E40's
+#    diagnostic finding that even grasped episodes only average 5.7cm
+#    xy_err (best case 0.18cm) -- the arm isn't settling into a steady hold
+#    near the hole.
+# 2. xy_err_weight_curriculum (this config) -- anneals the dense potential-
+#    shaping's xy_err coefficient from 1.5 (the value used unconditionally
+#    throughout so far) down to 1.0 over a LONG 70% of training, softening the
+#    pull-toward-the-hole gradient as training progresses so it stops
+#    potentially driving overshoot/oscillation right at the target once
+#    transit is largely mastered.
+#
+# Continuing from E40's own checkpoint (not a fresh E24 warm-start) --
+# E40 already showed real, working grasp-hold stability (toggles down to
+# single digits); these two additions target the REMAINING problems
+# (imprecise settling, and whatever role an aggressive xy pull plays in
+# both jitter and the grasp-shyness side effect) on top of that base,
+# not a redo of the drop-penalty fix itself.
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  align_only: true
+xy_err_weight_curriculum: true
+xy_err_weight_start: 1.5
+xy_err_weight_end: 1.0
+xy_err_weight_anneal_frac: 0.7
+total_timesteps: 2000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

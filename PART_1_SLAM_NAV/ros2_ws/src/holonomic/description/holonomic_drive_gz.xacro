@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!--
+    Gazebo Harmonic (gz-sim) has no direct equivalent of Gazebo Classic's
+    libgazebo_ros_planar_move.so, which this robot originally used to move
+    holonomically (it teleports/sets body velocity directly, ignoring the
+    wheel meshes, which are cosmetic only).
+
+    To reproduce the same body-frame vx / vy / wz behaviour on gz-sim without
+    writing a custom C++ System plugin, this file inserts three tiny,
+    (near-)massless virtual joints ABOVE base_link:
+
+        odom  =[yaw, continuous]=>  yaw_carriage
+              =[x, prismatic]=>     x_carriage
+              =[y, prismatic]=>     base_link  (existing robot, unchanged)
+
+    Doing yaw first means the x/y prismatic joints translate along the
+    robot's OWN current heading (body frame), not the world frame, which
+    matches standard /cmd_vel semantics (linear.x = forward, linear.y =
+    strafe, angular.z = yaw rate), and matches what the original Classic
+    plugin did internally.
+
+    Vertical (Z) support is unaffected: it still comes from the wheel/rubber
+    collision meshes resting on the ground plane under gravity, exactly as
+    in the original model; none of these three joints touch Z.
+
+    Each joint is actuated in *velocity* mode by a gz-sim-joint-controller-system
+    instance, commanded over a Double topic. cmd_vel_decompose.py (a small
+    ROS2 node) splits /cmd_vel into the three components; config/bridge.yaml
+    bridges them from ROS std_msgs/Float64 to the gz Double topics below.
+
+    NOTE: because this bypasses the wheel joints, the visual wheels do not
+    spin. That's a cosmetic limitation of this "virtual planar joint" trick,
+    consistent with the original Classic behaviour (its wheels didn't spin
+    either, since planar_move overrides the body pose/velocity directly).
+  -->
+
+  <xacro:property name="entity_name" value="holonomic"/>
+
+  <link name="odom">
+    <inertial>
+      <mass value="0.001"/>
+      <inertia ixx="1e-9" ixy="0" ixz="0" iyy="1e-9" iyz="0" izz="1e-9"/>
+    </inertial>
+  </link>
+
+  <link name="yaw_carriage">
+    <inertial>
+      <mass value="0.001"/>
+      <inertia ixx="1e-9" ixy="0" ixz="0" iyy="1e-9" iyz="0" izz="1e-9"/>
+    </inertial>
+  </link>
+
+  <link name="x_carriage">
+    <inertial>
+      <mass value="0.001"/>
+      <inertia ixx="1e-9" ixy="0" ixz="0" iyy="1e-9" iyz="0" izz="1e-9"/>
+    </inertial>
+  </link>
+
+  <joint name="joint_yaw" type="continuous">
+    <parent link="odom"/>
+    <child link="yaw_carriage"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="joint_x" type="prismatic">
+    <parent link="yaw_carriage"/>
+    <child link="x_carriage"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1000" upper="1000" effort="1000" velocity="5"/>
+  </joint>
+
+  <joint name="joint_y" type="prismatic">
+    <parent link="x_carriage"/>
+    <!-- base_link is defined in robot_core_highres.xacro / robot_core.xacro -->
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1000" upper="1000" effort="1000" velocity="5"/>
+  </joint>
+
+  <gazebo>
+    <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+      <joint_name>joint_x</joint_name>
+      <use_force_commands>false</use_force_commands>
+      <topic>/model/${entity_name}/joint_x/cmd_vel</topic>
+      <initial_velocity>0</initial_velocity>
+    </plugin>
+
+    <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+      <joint_name>joint_y</joint_name>
+      <use_force_commands>false</use_force_commands>
+      <topic>/model/${entity_name}/joint_y/cmd_vel</topic>
+      <initial_velocity>0</initial_velocity>
+    </plugin>
+
+    <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+      <joint_name>joint_yaw</joint_name>
+      <use_force_commands>false</use_force_commands>
+      <topic>/model/${entity_name}/joint_yaw/cmd_vel</topic>
+      <initial_velocity>0</initial_velocity>
+    </plugin>
+
+    <plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
+      <odom_frame>odom</odom_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+      <odom_topic>/model/${entity_name}/odometry</odom_topic>
+      <odom_publish_frequency>30</odom_publish_frequency>
+      <tf_topic>/model/${entity_name}/pose</tf_topic>
+    </plugin>
+  </gazebo>
+
+</robot>

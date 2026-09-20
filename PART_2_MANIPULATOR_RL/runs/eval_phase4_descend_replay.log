@@ -1,0 +1,3 @@
+pybullet build time: Nov 28 2023 23:45:17
+[       in_dist] success=0.000 collision=0.805 steps=105 path_eff=0.55 depth=0.000 tilt=10.9
+[eval] wrote results/eval_phase4_descend_replay.csv

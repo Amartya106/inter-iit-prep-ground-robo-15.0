@@ -1,0 +1,74 @@
+# Phase 4 -- R5, isolating insertion precision directly, prompted by R4a's
+# pre-grasped/cold-start split: giving the policy a FREE grasp with ZERO
+# obstacles still only got 1.7% success, identical to cold-start (checked at
+# a checkpoint where that starting condition was still in-distribution, not
+# an artifact of curriculum staleness). Grasp acquisition and obstacle
+# avoidance are real, separate problems (see R1/R2/R3), but neither can be
+# the reason the OVERALL number stayed flat -- something is also blocking
+# insertion itself, independent of them, and no run so far has isolated it
+# cleanly. Consistent with the oldest fact in this whole investigation: the
+# privileged scripted oracle -- zero exploration problem, perfect state --
+# only hits 2-6% on insertion, and needs an active reorientation strategy
+# for the top of that range (EXPERIMENTS.md E79).
+#
+# cfg.insert_only (see configs/ppo_phase4b_insert.yaml, E33/E37/E73's own
+# task -- reused, not new machinery): EVERY episode, train and eval, starts
+# already grasped and xy/tilt-aligned directly in the insertion zone
+# (env._start_pre_inserted). insert_start_depth_curriculum anneals the free
+# starting depth 1.0 (trivial, already past success depth) -> 0.0 (peg tip
+# just touching the mouth, real push-through required) over the first 50%
+# of training -- eval always forces 0.0 regardless (enforced in env.py
+# itself), so eval numbers are never diluted by the training crutch.
+#
+# What's actually NEW here, vs every prior insert-only attempt (E33: 0.025,
+# E37: 0.02, E73: 0.040, the current best real KUKA phase-4 number): this
+# is FROM SCRATCH, not warm-started from an earlier phase, and num_obstacles
+# forced to 0. Every earlier insert-only run was warm-started (E24/phase 3)
+# and kept the full 2-5 obstacle range. Note E79's grasp-weld fix does NOT
+# change this task's mechanics at all -- _start_pre_inserted is one of the
+# teleport helpers already verified bit-identical before/after E79 -- so
+# this isolates a completely different, orthogonal question: can insertion
+# be learned at all here, independent of warm-starting and obstacles.
+#
+# max_steps cut to 80 (proven value) -- no reach/grasp/transit legs to
+# cover, just a few cm of vertical motion.
+#
+#   MANIPULARL_TORCH_THREADS=8 .venv_gpu_test/bin/python train.py \
+#     --config configs/ppo_phase4_r5_insertonly_scratch.yaml \
+#     --seed 0 --out-dir runs/phase4_r5_insertonly_scratch \
+#     > logs/phase4_r5_insertonly_scratch.log 2>&1
+#
+# Decision gate: evaluate.py --phase 4 --algo ppo --insert-only --episodes
+# 200 on the full checkpoint sweep. >0.040 (beats E73, the standing best
+# real KUKA phase-4 number) is a genuinely new result. Flat near the
+# historical 0.02-0.04 band means insertion precision itself is the hard
+# constraint regardless of scratch-vs-warm-start or obstacles -- a much
+# more fundamental finding than anything this investigation has hit before.
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+cfg_overrides:
+  insert_only: true
+  max_steps: 80
+  num_obstacles: 0
+  obstacle_min: 0
+  obstacle_max: 0
+insert_start_depth_curriculum: true
+insert_start_depth_frac: 0.5
+satisficing_proximity: true
+risk_seeking_depth: true
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

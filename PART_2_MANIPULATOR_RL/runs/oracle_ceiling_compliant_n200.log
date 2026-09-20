@@ -1,0 +1,48 @@
+pybullet build time: Nov 28 2023 23:45:17
+  25/200  success=0.000  depth_ok=0.000
+  50/200  success=0.020  depth_ok=0.040
+  75/200  success=0.013  depth_ok=0.027
+  100/200  success=0.020  depth_ok=0.030
+  125/200  success=0.024  depth_ok=0.032
+  150/200  success=0.027  depth_ok=0.033
+  175/200  success=0.023  depth_ok=0.029
+  200/200  success=0.020  depth_ok=0.025
+
+==================================================================
+ORACLE CEILING -- phase 4, eval split, N=200
+privileged scripted IK expert (scripts/scripted_expert.py)
+==================================================================
+
+OVERALL
+  success        : 0.0200   (4/200)
+  collided       : 0.380
+  mean steps     : 271.9
+
+FUNNEL (fraction of ALL 200 episodes reaching each stage)
+  grasp_ok  peg ever picked up                   0.700   (conditional 0.700)
+  align_ok  above mouth, xy < 10mm               0.365   (conditional 0.521)
+  enter_ok  peg centre >5mm past mouth           0.035   (conditional 0.096)
+  depth_ok  reached 30mm depth                   0.025   (conditional 0.714)
+  success   + tilt, held 10 steps, no collision  0.020   (conditional 0.800)
+
+EXPERT STATE MACHINE (its own final state)
+  ALIGN         130  (65.0%)
+  DESCEND        50  (25.0%)
+  GRASP          15  (7.5%)
+  APPROACH        4  (2.0%)
+  LIFT            1  (0.5%)
+  ever entered INSERT (its own xy<3.5mm gate fired): 0.000
+
+PRECISION (of 140 grasped episodes)
+  min xy_err while grasped       mean=3.34cm  median=0.91cm  best=0.04cm
+  min xy_err while above mouth   mean=1.41cm  median=0.87cm  best=0.04cm
+  max_depth                      mean=0.03cm  median=0.00cm  best=3.06cm
+
+WHY THE DESCENT STALLS
+  episodes with peg-vs-hole-ring contact: 75/200 (37.5%)
+    xy_err at FIRST ring contact: mean=4.35cm  median=4.72cm  best=0.34cm
+    steps in ring contact:        mean=43.6  median=11.0  worst=400
+  peg-TIP height at max depth: mean=1.91cm  median=-0.00cm  lowest=-0.01cm
+    (mouth plane is at z=10.00cm; tip must reach z=3.00cm for success)
+
+[oracle] per-episode rows -> runs/oracle_compliant_n200.json

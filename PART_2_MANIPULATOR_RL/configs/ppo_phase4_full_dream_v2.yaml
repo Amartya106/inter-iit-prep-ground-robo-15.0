@@ -1,0 +1,45 @@
+# Phase 4 -- monolithic task, "dream a LOT" v2 (escalating further on
+# top of ppo_phase4_full_dream.yaml, once that run -- dream_env_frac=0.5,
+# horizon=10, n_branches=1 (implicit) -- finished). Same base fixes (obstacle-
+# keepout bugfix + dynamics model trained on 76,011 full-Phase4 transitions,
+# see the v1 config's comments for full detail, unchanged here).
+#
+# Escalated dreaming knobs:
+#   dream_env_frac  0.5  -> 0.75  (6 of 8 envs dream each rollout, not 4)
+#   dream_n_branches 1   -> 5     (5 independent imagined futures per env,
+#                                  spread across distinct, non-overlapping
+#                                  buffer windows -- verified via a direct
+#                                  smoke test before this launch: 3-branch
+#                                  case produced exactly 3 clean, non-
+#                                  overlapping 10-step groups per env column)
+#   dream_horizon   10   -> 12    (slightly longer per-branch imagined
+#                                  trajectory)
+# Net: ~360 dreamed steps/rollout (6 envs x 5 branches x up to 12 steps) out
+# of a 4096-slot buffer (8 envs x 512 steps) -- roughly 8.8% synthetic,
+# versus v1's ~1%, an ~9x increase in dreamed-data volume.
+#
+# Warm-started from runs/phase3_ppo_best (E48), same as v1 -- NOT from v1's
+# own checkpoint, so this is a clean, isolated comparison of the dreaming
+# knobs alone, not confounded by v1's own training having already happened.
+phase: 4
+algo: ppo
+n_envs: 8
+frame_stack: 3
+dream_model_path: runs/dynamics_model_full4.pt
+dream_horizon: 12
+dream_env_frac: 0.75
+dream_n_branches: 5
+total_timesteps: 2500000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

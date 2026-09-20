@@ -1,0 +1,60 @@
+# Phase 3 -- Obstacle-Aware, UR5 (6-DOF) port. Structural-cause fix, after a
+# checkpoint sweep of ppo_phase3_ur5_longer's 5M-step run found no hidden
+# early peak (best on disk: best_model.zip at 0.15/0.735, not the KUKA-E48
+# shape of an early spike that later decayed) and a 100-episode diagnostic
+# on that checkpoint found the real bottlenecks were structural, not a
+# training-duration or reward-weight problem:
+#   - 35% of collisions were gripper-link-only (Robotiq's 12 links carry
+#     full mesh collision but are never actuated -- grasping is a snap
+#     constraint at the flange; KUKA has no gripper at all)
+#   - 9% of episodes were dead-on-arrival (collision within 2 steps --
+#     obstacles could spawn already overlapping the arm's rest pose)
+#   - the dense goal-approach shaping was silenced (`in_danger`,
+#     rewards.py) on 39.5% of ALL steps, because a prior fix widened the
+#     shaping distance check to all 18 links including 4cm-inflated
+#     fingers
+# Four changes, all in manipularl_ur5/env.py + train_ur5.py (manipularl/ and
+# tests/ untouched, verified via pytest):
+#   1. Gripper links (indices ARM_DOF..17) collision-filtered out entirely
+#      (setCollisionFilterGroupMask, group=mask=0) -- removes the pure
+#      KUKA-vs-UR5 geometry confound
+#   2. min_obstacle_dist reverted to range(ARM_DOF) (matches KUKA exactly
+#      now that the gripper can't physically collide); repulsion-weight
+#      monkeypatch from the (measured-worse, 0.015/0.855) tune run removed,
+#      restoring stock rewards.py defaults (0.12/0.5/1.0)
+#   3. _clear_obstacle_from_rest_pose(): obstacles spawning within 5cm of
+#      an arm link get pushed radially outward, re-checked up to 8 tries
+#   4. --reset-obstacle-obs-norm (this run's CLI flag): zeroes the 54
+#      obstacle-feature obs dims' carried-over VecNormalize variance
+#      (measured ~2e-11 from Phase 2's all-zero obstacle obs) back to
+#      mean=0/var=1 per stacked frame, so real obstacle features arrive at
+#      a sane scale instead of railed at +/-10
+# Hyperparameters/curricula identical to ppo_phase3_ur5_longer.yaml (5.0M
+# steps). Warm-started from runs/phase2_ppo_ur5_longer (same source as
+# every Phase 3 attempt so far), with --reset-obstacle-obs-norm.
+# Decision criteria (see plan): best checkpoint (full sweep, not just
+# final) vs KUKA's own peak-checkpoint 0.80/0.175.
+phase: 3
+algo: ppo
+n_envs: 16
+frame_stack: 3
+grasp_curriculum: 0.35
+anneal_grasp_curriculum: true
+anneal_frac: 0.5
+obstacle_curriculum: true
+obstacle_curriculum_start: [0, 1]
+obstacle_curriculum_frac: 0.5
+total_timesteps: 5000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]

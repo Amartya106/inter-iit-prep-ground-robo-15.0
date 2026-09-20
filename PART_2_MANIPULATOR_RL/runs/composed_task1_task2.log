@@ -1,0 +1,17 @@
+>>> 00:35:42 composed eval: Task1 v4 (align) -> regrasp -> Task2 v2 (insert)
+pybullet build time: Nov 28 2023 23:45:17
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/scripts/evaluate_composed.py:220: RuntimeWarning: Mean of empty slice
+  print(f"insert_tilt_deg_mean: {np.nanmean(tilt):.2f}")
+/storage/Ground-Robo-Prepathon/submission/PART_2_MANIPULATOR_RL/scripts/evaluate_composed.py:233: RuntimeWarning: Mean of empty slice
+  insert_tilt_deg_mean=np.nanmean(tilt),
+
+N=200
+stage1_aligned (handed off to Task 2): 0.000
+overall success: 0.000
+collision_rate: 0.685
+mean_steps: 191.4
+insert_depth_mean: 0.00000
+insert_tilt_deg_mean: nan
+grasp_failure_rate (stage 2 only): 0.000
+[eval] wrote results/eval_phase4_composed_task1task2.csv
+>>> 00:37:54 composed eval DONE

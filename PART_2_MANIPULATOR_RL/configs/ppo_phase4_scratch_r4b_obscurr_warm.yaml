@@ -1,0 +1,67 @@
+# Phase 4 -- R4b, second half of the two-stage fix. Warm-starts from R4a
+# (zero-obstacle grasp+insert, trained under the FIXED grasp physics --
+# regenerated fresh this session specifically so this warm start doesn't
+# import the old, now-wrong grasp habit R1/R2/R3 avoided by training from
+# scratch). Adds the obstacle_curriculum on top, the way E13 actually did it
+# for phase 2->3 -- simultaneous-from-scratch (R3) diverged instead of
+# converging (collision_rate climbed 0.49->0.95 across training, sustained,
+# not transient).
+#
+# ent_coef 0.01, NOT 0.008 -- R1/R2/R3 all used 0.008 (the proven ZERO-
+# obstacle value, matching phase 2's own scratch recipe) on an obstacle-
+# bearing task. The recipe that actually solved obstacle avoidance
+# (configs/ppo_phase3.yaml, E13) used 0.01. Passed via --ent-coef on the
+# CLI, not the hyperparams block below -- train.py silently ignores a warm
+# start's config hyperparams.ent_coef unless overridden on the CLI
+# (confirmed in this project's own code, train.py's warm-start branches).
+#
+# No --warm-start-pad needed: R4a's observation space is bit-identical to
+# full phase 4's (the K-nearest-obstacle encoding always has MAX_OBSTACLES_
+# IN_OBS=6 slots regardless of how many real obstacles exist; zero
+# obstacles just means those slots are placeholder-filled) -- plain
+# --warm-start is correct.
+#
+#   MANIPULARL_TORCH_THREADS=6 .venv_gpu_test/bin/python train.py \
+#     --config configs/ppo_phase4_scratch_r4b_obscurr_warm.yaml \
+#     --warm-start runs/phase4_scratch_r4a_zeroobs/model.zip \
+#     --warm-start-norm runs/phase4_scratch_r4a_zeroobs/vecnormalize.pkl \
+#     --ent-coef 0.01 \
+#     --seed 0 --out-dir runs/phase4_scratch_r4b_obscurr_warm \
+#     > logs/phase4_scratch_r4b_obscurr_warm.log 2>&1
+#
+# Decision gate: same as R3's, but with a meaningful comparison point now --
+# collision_rate should DECREASE over training (matching E13's own
+# 0.28->0.175 trajectory), not increase like R3's did. Kill if collision_
+# rate is still climbing (not just high) past the obstacle curriculum's own
+# anneal point (2.5M).
+phase: 4
+algo: ppo
+n_envs: 12
+frame_stack: 3
+# light residual grasp_curriculum for re-adaptation post-warm-start, not a
+# primary bootstrap (R4a already solved cold-start grasping) -- mirrors
+# E13's own phase3.yaml (grasp_curriculum 0.35/anneal_frac 0.5), shortened
+# slightly since R4a's grasp skill should already be solid under the fixed
+# physics, unlike phase 2's source at the time E13 was written.
+grasp_curriculum: 0.3
+anneal_grasp_curriculum: true
+anneal_frac: 0.4
+obstacle_curriculum: true
+obstacle_curriculum_start: [0, 1]
+obstacle_curriculum_frac: 0.5
+satisficing_proximity: true
+risk_seeking_depth: true
+total_timesteps: 5000000
+hyperparams:
+  learning_rate: 0.0003
+  n_steps: 512
+  batch_size: 2048
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  policy_kwargs:
+    net_arch: [256, 256]
