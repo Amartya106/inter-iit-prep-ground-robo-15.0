@@ -154,6 +154,8 @@ All evaluation numbers below use 200 independently randomized episodes from the 
 
 Videos: `media/phase1_reaching.mp4` (5/5 successful), `media/phase2_pickplace.mp4` (5/5 successful), `media/phase3_obstacle_aware.mp4` (5/5 successful), `media/phase4_peg_in_hole.mp4` (5 episodes rolled honestly, 0 successful, matching the ~1.5-2% full-task ceiling documented above, plus one successful insertion appended at the end, found on attempt 19 of a separate `--successes-only` search, so both the typical outcome and a real success are visible). Chart: `plots/per_phase_summary.png`.
 
+![Success and collision rate per phase](../plots/per_phase_summary.png)
+
 More ablations are logged in `EXPERIMENTS.md` and `results/eval_phase*_*.csv`. The TQC "gamble" for Phase 2 plateaued at 0.01. Keeping the Phase 1 warm-start while applying every reward fix still collapsed to 0.00, which isolates the warm-start as the actual cause. BC alone on scripted-expert demos scored 0.00 (covariate shift). A "soft warm-start" on Phase 3 (critic re-init, higher entropy, policy kept) reached 0.475, no better than the 0.515 baseline measured at the time (before later work moved Phase 3 to 0.86). The Phase 2 to 3 transfer is already mostly positive, so softening it did not help.
 
 ### 5.2 Honest account of where it fell short (as the problem statement's section 3.2 asks for)
@@ -191,6 +193,8 @@ I evaluated **E51** (`runs/phase4_full_dream`, best full-task Phase 4 checkpoint
 | in-distribution | 0.015 | 0.425 | 0.00136 m | 269 | 0.393 m |
 | **unseen dynamics** | 0.015 | **0.555** | 0.0009 m | 228 | 0.359 m |
 
+![Success rate under unseen dynamics vs in-distribution](../plots/generalization.png)
+
 **Success rate stays flat**, matching the ~1.5% ceiling measured everywhere else, including the scripted oracle (§5.2, E55). The diagnosed root cause (E56) is a kinematic grasp-orientation problem, not a sensitivity to dynamics. **Collision rate is where the generalization gap actually shows up**: it rises 31% relative (0.425 to 0.555) under a wider obstacle count and shifted contact dynamics. That is exactly the kind of degradation the problem statement's Phase 5 section asks to make visible. The policy's willingness to attempt insertion generalizes fine, but its collision avoidance does not. Insertion depth falling back to the historic 0.0009 m wall under unseen (tighter, down to 2mm) bore clearance is expected: E51's own best of 0.00136 m was measured specifically at the trained 3mm clearance.
 
 ### 5.6 Phase 6: Robustness / Stress Test
@@ -205,6 +209,8 @@ This uses the same checkpoint as §5.5 (E51), running `evaluate.py --phase 4 --n
 | 0.020 | 0.015 | 0.625 | 0.0009 m | 0.107 deg |
 | 0.040 | 0.015 | 0.685 | 0.0009 m | 0.109 deg |
 | 0.080 | 0.015 | 0.690 | 0.0009 m | 0.107 deg |
+
+![Success and collision rate under increasing eval-time noise](../plots/noise_degradation.png)
 
 **This is a genuinely mixed result, not simply "graceful" or "brittle."** Success rate stays flat at every noise level, but that is a floor effect, not real robustness: 0.015 is already close to the ~1.5-2% environment ceiling, so there is very little room left for it to get worse. Collision rate is where the real signal is, and it degrades gracefully: a smooth 62% relative rise from baseline to the highest noise level, leveling off between the top two. The rare, fine-precision behaviors are brittle, not graceful. E51's own best achievement, breaking the historic 0.0009 m insertion-depth wall that held across nearly every other Phase 4 run (E10, E16, E17, E28, E30, E52, E53), disappears at the **smallest** noise level tested (sigma=0.005) and never comes back at any higher level. Tilt control shows the same on/off pattern. This step-function failure suggests these specific behaviors are narrow, fragile results of one training run, not a skill the policy robustly learned.
 

@@ -11,11 +11,13 @@ The goal of this part was to build a working mapping and autonomous navigation p
 
 | Demo | Evidence |
 |---|---|
-| SLAM mapping | `media/slam_mapping_demo.png` |
+| SLAM mapping | `media/slam_mapping_demo.png` (same image as the saved map below) |
 | Autonomous navigation and obstacle avoidance | `media/nav2_costmap_demo.mp4` |
 | Saved occupancy grid | `maps/warehouse_map.png` |
 
 The navigation demo shows the robot navigating using Nav2, with costmaps and a live obstacle reroute.
+
+![Saved occupancy grid map of the warehouse](maps/warehouse_map.png)
 
 ## Problem Statement Coverage
 

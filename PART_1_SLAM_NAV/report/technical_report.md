@@ -261,6 +261,8 @@ image as `maps/warehouse_map.png`). The video was captured on a machine with
 a display, since this development machine has none, which is why the
 headless rosbag above exists as a reproducible fallback.
 
+![Saved occupancy grid map of the warehouse](../maps/warehouse_map.png)
+
 **Limitation (honest account).** Navigation deliberately runs on the
 *real* sensor stack (raw wheel odometry plus IMU, fused by the EKF,
 localised by AMCL against the saved map). The ground-truth-derived

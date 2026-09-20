@@ -352,9 +352,11 @@ Full numbers are in `EXPERIMENTS.md` E63.
 
 ### Results Visualization
 
-```text
-plots/per_phase_summary.png
-```
+![Success and collision rate per phase](plots/per_phase_summary.png)
+
+![Success rate under unseen dynamics vs in-distribution](plots/generalization.png)
+
+![Success and collision rate under increasing eval-time noise](plots/noise_degradation.png)
 
 `EXPERIMENTS.md` has the full record: every attempt, every result, every dead end.
 
