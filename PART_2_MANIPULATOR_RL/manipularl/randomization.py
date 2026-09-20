@@ -62,14 +62,9 @@ class EpisodeSampler:
         )
         # A separate stream chooses episode indices, so callers can just ask
         # for "the next episode" and still land in the right partition.
-        # NOTE: this stream previously ignored any seed the caller passed in
-        # entirely (`ManipulaRLEnv(seed=...)` ran through here as a no-op --
-        # every eval run, regardless of what seed was requested, always drew
-        # the exact same `default_rng(1)` episode sequence). `index_seed`
-        # (None by default) preserves that EXACT historical behavior for
-        # every existing logged result; pass an explicit value only to draw
-        # a genuinely independent held-out episode set (e.g. a repeated-eval
-        # variance check across multiple seeds).
+        # `index_seed` defaults to None, which reproduces every existing
+        # logged result's exact episode sequence; pass a value only to draw
+        # an independent held-out set (e.g. a repeated-eval variance check).
         self._index_rng = np.random.default_rng(
             index_seed if index_seed is not None else (0 if split == "train" else 1))
         # obstacle-count curriculum: None -> use cfg.obstacle_min/max as-is;
@@ -121,27 +116,11 @@ class EpisodeSampler:
         return ec
 
     def _sample_obstacles(self, rng, n: int, ec: EpisodeConfig) -> List[tuple]:
-        # Each keepout point pairs with its OWN exclusion radius -- hole_xy
-        # gets a much larger one (0.22m vs the others' 0.10m). Found via a
-        # direct diagnostic (descend_only, 40 eval episodes): min_obstacle_dist
-        # at RESET (before the policy takes any action) was as low as 0.3cm,
-        # and 70% of episodes started within 15cm of an obstacle -- because
-        # every hole-adjacent teleport curriculum (_start_pre_inserted,
-        # _start_pre_airspace, _start_pre_aligned) computes its IK target
-        # from hole_xy alone, with zero awareness of where obstacles ended
-        # up; the old flat 10cm keepout was measured from the hole CENTER
-        # point, not from the arm/peg's actual resulting swept volume once
-        # IK solves for a hovering pose there. A meaningful fraction of
-        # episodes were consequently unwinnable by construction (collided
-        # within the first few steps regardless of policy skill) -- this is
-        # the most likely explanation for Task 2/insert_only's own
-        # persistently high collision rate throughout too (E33 0.825, E37
-        # 0.84 -- same magnitude, same root cause, never previously
-        # diagnosed). 0.22m chosen to comfortably clear the widest obstacle
-        # footprint (5cm half-width) plus real wrist/forearm approach
-        # clearance, informed by the diagnostic showing 15cm alone wasn't
-        # enough. Other keepout points (robot base, peg_xy, targets) are
-        # NOT teleport magnets the same way and keep their original 10cm.
+        # Each keepout point has its own exclusion radius. hole_xy's is much
+        # larger than the others': the hole-adjacent teleport curricula place
+        # the arm there regardless of nearby obstacles, so a small radius let
+        # obstacles spawn close enough to make some episodes unwinnable by
+        # construction before the policy could act.
         keepout = [
             (np.array([0.0, 0.0]), 0.10),          # robot base
             (np.asarray(ec.peg_xy), 0.10),
@@ -158,16 +137,9 @@ class EpisodeSampler:
                     xy = cand
                     break
             if xy is None:
-                # All 50 attempts violated some keepout (more likely now that
-                # hole_xy's radius grew to 0.28m) -- previously fell back to
-                # using the LAST failed candidate anyway, regardless of how
-                # badly it violated keepout (this was silently reintroducing
-                # exactly the near-zero-clearance placements the radius
-                # increase was meant to eliminate, and explained why the
-                # worst-case tail got WORSE when the radius grew: a larger
-                # radius makes the 50-try search fail more often, which hit
-                # this fallback more often). Skip this obstacle instead --
-                # a slightly emptier scene beats a guaranteed-unwinnable one.
+                # All 50 attempts violated some keepout. Skip this obstacle
+                # rather than place it anyway: a slightly emptier scene beats
+                # a guaranteed-unwinnable one.
                 continue
             shape = "box" if rng.random() < 0.5 else "cylinder"
             h = rng.uniform(0.05, 0.20)

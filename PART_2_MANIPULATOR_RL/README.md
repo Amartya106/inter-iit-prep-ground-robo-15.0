@@ -1,117 +1,410 @@
-# Part 2, Manipulator RL
 
-One PyBullet plus Gymnasium environment, with six task phases built on top: Reaching, Pick and Place, Obstacle Aware Manipulation, Peg in Hole Insertion, Dynamics Generalization, and a Robustness and Stress Test. All the decision making is learned through RL. The only non-learned part is PyBullet's own low-level joint position servo.
+# Part 2: Manipulator Reinforcement Learning
 
-Robot: KUKA iiwa, a 7-DOF arm, bundled with `pybullet_data`.
+A PyBullet plus Gymnasium environment for a 7-DOF KUKA iiwa arm, with six manipulation tasks: Reaching, Pick and Place, Obstacle-Aware Manipulation, Peg-in-Hole Insertion, Dynamics Generalization, and Robustness Testing.
 
-## What I had to rebuild from the assignment scaffold
+I built this to train and test RL policies on manipulation tasks that get harder step by step, from simple reaching up to precise insertion under noise and changing conditions.
 
-The scaffold runs, but cannot satisfy the problem statement as given. I rebuilt the parts that mattered, inside `manipularl/`.
+**Robot:** KUKA iiwa, 7 DOF, bundled with `pybullet_data`.
 
-| What was wrong | What I did about it |
+**Framework:** PyBullet, Gymnasium, Stable-Baselines3.
+
+All the decision making is learned through RL. The only non-learned part is PyBullet's own low-level joint position servo.
+
+## What I Rebuilt from the Assignment Scaffold
+
+The scaffold I was given ran, but several parts needed fixing or building from scratch to do what the tasks needed.
+
+| Issue in the scaffold | Change |
 |---|---|
-| Stage 4 had no hole, so peg-in-hole was physically impossible. | Built a bore socket in `manipularl/env.py`, a ring of flat box segments (default 8, an octagon). PyBullet has no way to cut a true circular hole into a solid, so this is an approximation; `cfg.hole_segments` can raise the segment count for a rounder one, but that is a real physics change, not yet retrained against. Success needs a grasp, no collision, depth past 3cm, xy/tilt within tolerance, held for 10 steps. |
-| The policy could not see obstacles at all. | Added the 6 nearest obstacles to the observation, fixed size, zero-filled when unused. |
-| Stage 2 success only required the peg to still be grasped, so it could never release. | Success now requires an actual release, with the peg settled. |
-| The obstacle RNG was never reseeded, so train and eval layouts were not separated. | `EpisodeSampler` draws every episode from a fixed seed range: train [0, 1e6), eval [1e6, 2e6). |
-| No domain randomization, noise, metrics, or evaluation harness. | Added dynamics randomization (phase 5), noise/perturbation wrappers (phase 6, eval only), and `evaluate.py`. |
-| The sim reset and reloaded all URDFs every episode, at 240Hz with one physics tick per step. | Made the scene persistent (25-30x faster resets). Control now runs at 20Hz, 12 physics substeps per step. |
-| Actions were raw joint velocity commands. | Switched to delta joint position control. |
+| Phase 4 had no physical hole, making peg-in-hole insertion impossible | Built an approximate bore socket using flat box segments |
+| The policy could not observe obstacles | Added the six nearest obstacles to the observation |
+| Phase 2 success only required the peg to remain grasped | Changed success to require an actual release and a settled peg |
+| Obstacle RNG was not reseeded | Added separate train and evaluation seed ranges |
+| No domain randomization, noise, metrics, or evaluation harness | Added dynamics randomization, evaluation-only perturbation wrappers, and `evaluate.py` |
+| Simulation reset reloaded URDFs every episode | Made the scene persistent, which makes resets about 25–30x faster |
+| Actions used raw joint velocity commands | Switched to delta joint position control |
 
-`manipularl/obstacles.py` is the scaffold's own obstacle generator, left unchanged.
+The scaffold's obstacle generator, `manipularl/obstacles.py`, is unchanged.
+
+### Peg-in-Hole Geometry
+
+The original scaffold had no hole for Phase 4. I built a socket in `manipularl/env.py` out of a ring of flat box segments.
+
+PyBullet has no way to cut a true circular hole into a solid, so this socket is an approximation. The default uses eight segments, which looks like an octagon.
+
+You can raise the segment count through `cfg.hole_segments` for a rounder hole, but that changes the physics, and I have not retrained against it yet.
+
+Insertion success requires:
+- A grasped peg
+- No collision
+- Insertion depth greater than 3 cm
+- XY position and tilt within tolerance
+- The conditions to remain satisfied for 10 steps
 
 ## Setup
 
+This project needs Python 3.10, since that's what the PyBullet package is built for.
+
+Create a virtual environment and install dependencies:
+
 ```bash
-uv venv --python 3.10 .venv          # or: python3.10 -m venv .venv
-uv pip install -r requirements.txt   # or: .venv/bin/pip install -r requirements.txt
+uv venv --python 3.10 .venv
+
+uv pip install -r requirements.txt
 ```
 
-Needs Python 3.10, since that's what the PyBullet package is built for. Torch runs on CPU on purpose: the networks are small (about 100k parameters), so a small laptop GPU would actually be slower once you count the time spent moving data to and from it.
+Or with the standard Python virtual environment:
 
-## Files
+```bash
+python3.10 -m venv .venv
 
-| Path | What's in it |
+.venv/bin/pip install -r requirements.txt
+```
+
+### Compute
+
+I used both CPU and GPU across this project, not one exclusively. Phases 1-4's main checkpoints (`.venv`) trained on CPU. The later Phase 4 insertion investigation (R1-R6, `.venv_gpu_test`) trained on GPU. I benchmarked the two directly (`runs/bench_cpu_clean.log` vs `runs/bench_gpu_clean.log`): about 1,450-1,490 steps/s on CPU versus 1,500-1,550 on GPU. PyBullet's own physics stepping is the real bottleneck here, not the ~100k-parameter network, so which one you use barely changes the number.
+
+## Project Structure
+
+| Path | Description |
 |---|---|
 | `manipularl/env.py` | `ManipulaRLEnv`: persistent scene, delta position control, hole socket, obstacle collisions, observation assembly |
-| `manipularl/configs.py` | the six `PhaseConfig` objects, interface constants, train/eval seed ranges |
-| `manipularl/rewards.py` | the staged, potential-based reward and success rules per phase, the core RL design piece |
-| `manipularl/randomization.py` | `EpisodeSampler`, builds per-episode layout and phase 5 dynamics |
-| `manipularl/wrappers.py` | `NoisyObservation`, `NoisyAction`, `PegPerturbation`, eval only |
-| `manipularl/make_env.py` | the vectorized environment wrapper stack |
+| `manipularl/configs.py` | Six phase configurations, interface constants, train/evaluation seed ranges |
+| `manipularl/rewards.py` | Staged potential-based rewards and phase-specific success rules |
+| `manipularl/randomization.py` | `EpisodeSampler`, episode layouts, Phase 5 dynamics randomization |
+| `manipularl/wrappers.py` | `NoisyObservation`, `NoisyAction`, and `PegPerturbation` wrappers |
+| `manipularl/make_env.py` | Vectorized environment wrapper stack |
 | `manipularl/callbacks.py` | TensorBoard logging for task metrics |
-| `train.py` | trains one phase (TQC or PPO) from a YAML config, with `--warm-start` |
-| `evaluate.py` | runs evaluation episodes, writes an aggregate metrics CSV, `--noise-sweep` for phase 6 |
-| `configs/` | phase configs, PPO is primary, TQC kept alongside |
-| `scripts/` | chain runner, diagnostics, scripted expert, demo collection, behavior cloning, rollout recording, plotting |
-| `EXPERIMENTS.md` | full run-by-run log: every attempt, every result, where the files live |
-| `tests/test_env.py` | API compliance, determinism, seed separation, obstacle count, hole-solvability checks |
+| `train.py` | Trains one phase using PPO or TQC, with optional warm-starting |
+| `evaluate.py` | Evaluation episodes, aggregate metrics CSV, and noise sweeps |
+| `configs/` | Phase-specific PPO and TQC configurations |
+| `scripts/` | Training chain, diagnostics, scripted expert, demonstrations, behavior cloning, rollout recording, and plotting |
+| `tests/test_env.py` | API compliance, determinism, seed separation, obstacle count, and hole-solvability checks |
+| `EXPERIMENTS.md` | Run-by-run experiment log, including failed attempts and results |
+| `media/` | Recorded demonstrations |
+| `runs/` | Training runs and checkpoints |
+| `results/` | Evaluation metrics |
+| `plots/` | Generated evaluation plots |
 
-## Observation and action spaces (same shape across every phase)
+## Observation and Action Spaces
 
-**Action**: `Box(-1, 1, (8,))`. Seven delta joint position commands (0.05 rad/step), plus a gripper signal (above 0.5 closes, at or below opens).
+The observation and action spaces have the same shape across all six phases.
 
-**Observation**: `Box(-inf, inf, (123,))`, 369 after a 3-frame stack. Covers joint state, end effector pose and velocity, gripper/grasp state, peg pose and velocity (absolute and relative to the end effector), goal pose and the peg-to-goal vector, insertion depth, wrist force/torque, the 6 nearest obstacles (9 values each), and a one-hot phase indicator.
+### Action
 
-While working on Phase 4, I tried adding more signals to the observation (peg tilt, ring distance, a shaped depth signal, ring contact) to see if it helped fine insertion control. It didn't help, and it broke every checkpoint trained before that change, including all four checkpoints used here. So I moved that code to `manipularl/obs_h3_extras.py` instead, where it sits unused, and kept the real observation the same size as before. That way `runs/phase1_ppo`, `runs/phase2_ppo`, `runs/phase3_ppo_best`, and `runs/phase4_full_dream` all still load and run directly. The videos in `media/` and the numbers in the table below were freshly re-recorded and re-checked against these exact checkpoints to confirm that.
+```text
+Box(-1, 1, (8,))
+```
 
-## How the reward is put together
+- Seven joint delta-position commands, scaled to 0.05 rad per step.
+- One gripper signal:
+  - Above 0.5: close
+  - At or below 0.5: open
 
-I use potential-based shaping: `F = k * (gamma * Phi(s') - Phi(s))`. This form is proven not to change what the best policy is (Ng et al. 1999), so it's safe to add. `Phi` is the negative distance to the current sub-goal. As the episode moves along, the sub-goal switches through one-time bonuses: reach, grasp, carry, align, insert.
+### Observation
 
-On top of that there's a penalty for jerky motion, a time penalty (so the policy can't just hover near the goal forever for free reward), a per-step penalty for colliding, and a large bonus for actually finishing the task. From phase 3 onward, avoiding collisions is required for success, not just a nice-to-have.
+```text
+Box(-inf, inf, (123,))
+```
+
+A three-frame stack produces 369 values.
+
+The observation includes:
+
+- Joint state
+- End-effector pose and velocity
+- Gripper and grasp state
+- Peg pose and velocity, both absolute and relative to the end effector
+- Goal pose and peg-to-goal vector
+- Insertion depth
+- Wrist force and torque
+- Six nearest obstacles, with nine values per obstacle
+- One-hot phase indicator
+
+### Observation Design During Phase 4
+
+While working on Phase 4, I experimented with adding peg tilt, ring distance, shaped depth, and ring contact signals to improve insertion control.
+
+These extra signals did not help, and they broke every checkpoint trained before that change.
+
+I moved the experimental observation code to `manipularl/obs_h3_extras.py` and kept the main observation shape unchanged.
+
+That way these checkpoints still load and run directly:
+
+```text
+runs/phase1_ppo
+runs/phase2_ppo
+runs/phase3_ppo_best
+runs/phase4_full_dream
+```
+
+I re-recorded the videos and re-checked the numbers below against these exact checkpoints.
+
+## Reward Design
+
+I use potential-based shaping:
+
+```
+F(s, s') = k * (gamma * Phi(s') - Phi(s))
+```
+
+where `Phi` is the negative distance to the current sub-goal.
+
+The sub-goal moves through the task in order:
+
+```text
+Reach → Grasp → Carry → Align → Insert
+```
+
+The reward also includes:
+
+- A penalty for jerky motion
+- A time penalty
+- A per-step collision penalty
+- A large bonus for completing the task
+
+From Phase 3 onward, avoiding collisions is required for success, not just a nice-to-have.
+
+This form is proven not to change what the best policy is (Ng et al. 1999), so it's safe to add.
 
 ## Training
 
+I use PPO as the main algorithm, and kept TQC configs around for comparison.
+
+### Phase 1: Reaching
+
 ```bash
-# Phase 1 (solved):
-PYTHONPATH=. .venv/bin/python train.py --config configs/ppo_phase1.yaml --out-dir runs/phase1_ppo
+PYTHONPATH=. .venv/bin/python train.py \
+  --config configs/ppo_phase1.yaml \
+  --out-dir runs/phase1_ppo
+```
 
-# Phase 2 (solved), FROM SCRATCH, not warm-started, a phase-1 warm start is
-# actually negative transfer here, see report §4.2 or EXPERIMENTS.md:
-PYTHONPATH=. .venv/bin/python train.py --config configs/ppo_phase2_scratch.yaml --out-dir runs/phase2_ppo
-PYTHONPATH=. .venv/bin/python scripts/diagnose_phase2.py --run runs/phase2_ppo --mode coldstart
+### Phase 2: Pick and Place
 
-# Phases 3-5, warm-started chain, detached:
-setsid bash -c 'bash scripts/chain_p3p4p5.sh > runs/chain_p3p4p5.log 2>&1' </dev/null & disown
+I train Phase 2 from scratch instead of warm-starting from Phase 1. In my tests, a Phase 1 warm start actually hurt, not helped.
+
+```bash
+PYTHONPATH=. .venv/bin/python train.py \
+  --config configs/ppo_phase2_scratch.yaml \
+  --out-dir runs/phase2_ppo
+
+PYTHONPATH=. .venv/bin/python scripts/diagnose_phase2.py \
+  --run runs/phase2_ppo \
+  --mode coldstart
+```
+
+### Phases 3–5: Warm-Started Training Chain
+
+```bash
+setsid bash -c \
+  'bash scripts/chain_p3p4p5.sh > runs/chain_p3p4p5.log 2>&1' \
+  </dev/null & disown
+```
+
+Watch training with TensorBoard:
+
+```bash
 tensorboard --logdir runs
 ```
 
-On algorithm choice: I planned to use TQC as the main algorithm, since it's usually a good fit for PyBullet tasks with lots of contact. But on this CPU (no CUDA, and a small laptop GPU would actually be slower at this model size) it only managed 120-330 steps per second. It solved phase 1 (0.935) but got stuck at 0.01 on phase 2, so I used PPO for every phase instead, which runs much faster: roughly 1,200-2,000 steps per second with 16 environments running in parallel. Configs for both are in `configs/`. Every run, including the ones that failed, is logged in `EXPERIMENTS.md`.
+### Algorithm Choice
 
-## Evaluating
+I originally planned to use TQC as the main algorithm, since it's usually a good fit for continuous-control tasks.
+
+But on this CPU, TQC only managed about 120–330 steps per second. It solved Phase 1 (0.935) but got stuck around 0.01 on Phase 2.
+
+So I used PPO for the rest, which runs much faster here: about 1,200–2,000 steps per second with 16 environments running in parallel.
+
+These are numbers from this specific setup, not a general claim that PPO always beats TQC.
+
+Every run, including the ones that failed, is logged in `EXPERIMENTS.md`.
+
+## Evaluation
+
+Evaluation uses different episode seeds than training, and the policy acts deterministically.
+
+Run evaluation for a trained checkpoint:
 
 ```bash
-PYTHONPATH=. .venv/bin/python evaluate.py --run runs/phase4_ppo --phase 4 --episodes 200
-# Generalization check: same checkpoint, two separate --phase calls (dynamics
-# randomization comes from which phase's config gets loaded, not from a
-# --conditions value, see evaluate.py's own docstring):
-PYTHONPATH=. .venv/bin/python evaluate.py --run runs/phase4_ppo --phase 5 --episodes 200
-PYTHONPATH=. .venv/bin/python evaluate.py --run runs/phase4_ppo --phase 4 --noise-sweep
-PYTHONPATH=. .venv/bin/python scripts/plot_eval.py --csv "results/eval_phase[1-4].csv" --out plots/
-PYTHONPATH=. .venv/bin/python scripts/record_rollout.py --run runs/phase3_ppo_best --phase 3 \
-    --episodes 5 --out media/phase3_obstacle_aware.mp4
+PYTHONPATH=. .venv/bin/python evaluate.py \
+  --run runs/phase4_ppo \
+  --phase 4 \
+  --episodes 200
 ```
 
-Metrics per condition: success rate, collision rate, completion time, path efficiency, final position error, grasp failure rate, insertion depth, tilt.
+### Dynamics Generalization
 
-## Where things landed (200 eval-split episodes, unseen layouts, deterministic policy)
+Evaluate the same checkpoint under Phase 5 dynamics:
 
-| Phase | success | collision | what happened |
-|---|---|---|---|
-| 1 Reaching | 1.00 (PPO), 0.935 (TQC) | 0.00 | solved |
-| 2 Pick & Place | 0.995 | 0.00 | solved from scratch with reward shaping and an annealed grasp curriculum. Report §4.2 |
-| 3 Obstacle-Aware | 0.86 | 0.08 | best result after a long series of reward-shaping attempts. EXPERIMENTS.md |
-| 4 Peg-in-Hole | 0.015-0.02 full task, 0.073 insert-only sub-task | 0.23-0.43 | genuinely hard, still not solved on the full task. I found and fixed a real bug in the grasp code (E79). A hand-coded controller with perfect information confirmed the fix works, tripling its success rate, but training an RL policy against the fix still did not move the full-task number (E80). An earlier finding, that a redundant arm joint adds difficulty, still holds too; the bug fix does not overturn it, just adds to the picture. Training on just the insertion step by itself did reach a new best on that smaller piece (0.073, up from 0.040). Full story: EXPERIMENTS.md E1-E80 |
-| 5 Dynamics Gen. | phase 4 checkpoint, evaluated | EXPERIMENTS.md E62 | success held flat under unseen dynamics, collision got meaningfully worse |
-| 6 Robustness | phase 4 checkpoint, evaluated | EXPERIMENTS.md E63 | collision degrades gracefully with noise, but the hard-won fine-precision behavior is brittle and does not survive any tested noise level |
+```bash
+PYTHONPATH=. .venv/bin/python evaluate.py \
+  --run runs/phase4_ppo \
+  --phase 5 \
+  --episodes 200
+```
 
-Chart: `plots/per_phase_summary.png`. Full log, every experiment, every dead end: `EXPERIMENTS.md`.
+Which phase config you load decides how much dynamics randomization gets used.
+
+### Robustness Testing
+
+Run the noise sweep:
+
+```bash
+PYTHONPATH=. .venv/bin/python evaluate.py \
+  --run runs/phase4_ppo \
+  --phase 4 \
+  --noise-sweep
+```
+
+### Plot Evaluation Results
+
+```bash
+PYTHONPATH=. .venv/bin/python scripts/plot_eval.py \
+  --csv "results/eval_phase[1-4].csv" \
+  --out plots/
+```
+
+### Record a Demonstration
+
+```bash
+PYTHONPATH=. .venv/bin/python scripts/record_rollout.py \
+  --run runs/phase3_ppo_best \
+  --phase 3 \
+  --episodes 5 \
+  --out media/phase3_obstacle_aware.mp4
+```
+
+### Evaluation Metrics
+
+Evaluation records:
+
+- Success rate
+- Collision rate
+- Completion time
+- Path efficiency
+- Final position error
+- Grasp failure rate
+- Insertion depth
+- Peg tilt
+
+## Results
+
+These results are from 200 evaluation episodes on unseen layouts, with the policy acting deterministically.
+
+| Phase | Success rate | Collision rate | Outcome |
+|---|---:|---:|---|
+| 1: Reaching | 1.00 PPO; 0.935 TQC | 0.00 | Solved |
+| 2: Pick and Place | 0.995 | 0.00 | Solved from scratch |
+| 3: Obstacle-Aware | 0.86 | 0.08 | Partial success |
+| 4: Peg-in-Hole | 0.015–0.02 full task | 0.23–0.43 | Not solved |
+| 5: Dynamics Generalization | See `EXPERIMENTS.md` E62 | See experiment log | Evaluated using Phase 4 checkpoint |
+| 6: Robustness | See `EXPERIMENTS.md` E63 | See experiment log | Evaluated using Phase 4 checkpoint |
+
+### Phase 1: Reaching
+
+PPO solved reaching, with a success rate of 1.00. TQC reached 0.935.
+
+### Phase 2: Pick and Place
+
+This task reached 0.995, with zero collisions in evaluation.
+
+Training from scratch worked better here than warm-starting from Phase 1.
+
+### Phase 3: Obstacle-Aware Manipulation
+
+The best result I got was 0.86 success, 0.08 collision.
+
+That came after a long series of reward-shaping attempts, all logged in `EXPERIMENTS.md`.
+
+### Phase 4: Peg-in-Hole Insertion
+
+The full peg-in-hole task is still not solved.
+
+The full-task success rate is about 1.5–2%. An insertion-only sub-task reached 7.3%, up from 4.0%.
+
+While debugging, I found and fixed a bug in the grasp code (E79). A hand-coded controller with perfect information confirmed the fix worked and raised its success rate.
+
+But training an RL policy against the fix still did not improve the full-task result (E80).
+
+An earlier experiment also found that the extra arm joint adds difficulty. The grasp fix doesn't overturn that, it just adds another factor.
+
+The insertion-only result is progress on a smaller piece, not a solution to the whole task.
+
+See `EXPERIMENTS.md` E1–E80 for the complete history.
+
+### Phase 5: Dynamics Generalization
+
+I evaluated the Phase 4 checkpoint under Phase 5 dynamics.
+
+Success stayed about flat under unseen dynamics, but collisions got worse.
+
+Full numbers are in `EXPERIMENTS.md` E62.
+
+### Phase 6: Robustness and Stress Testing
+
+I evaluated the same checkpoint with observation noise, action noise, and peg perturbations.
+
+Collisions got gracefully worse with noise, but the fine, hard-won insertion precision was brittle and didn't survive any tested noise level.
+
+Full numbers are in `EXPERIMENTS.md` E63.
+
+### Results Visualization
+
+```text
+plots/per_phase_summary.png
+```
+
+`EXPERIMENTS.md` has the full record: every attempt, every result, every dead end.
 
 ## Tests
+
+Run the environment tests:
 
 ```bash
 PYTHONPATH="" .venv/bin/python -m pytest -q tests/test_env.py
 ```
 
-(Empty `PYTHONPATH` avoids a broken ROS-supplied pytest plugin, in case ROS is sourced in the same shell.)
+An empty `PYTHONPATH` avoids a broken ROS-supplied pytest plugin, in case ROS is sourced in the same shell.
+
+The tests cover:
+
+- Gymnasium API compliance
+- Determinism
+- Train/evaluation seed separation
+- Obstacle count
+- Hole-solvability checks
+
+## Limitations
+
+- **Peg-in-hole is still not solved.** The full task has a low success rate even after a lot of experimenting.
+- **The socket shape is only an approximation.** The hole is built from flat box segments, not a true circular bore.
+- **Extra observation signals didn't help.** The insertion-specific signals I tried adding did not improve the policy and broke checkpoint compatibility.
+- **Generalization has a real gap.** Collisions got worse under unseen dynamics.
+- **Robustness is limited.** The fine insertion precision did not survive any tested noise level.
+- **Compute was a limit.** Training speed was capped by CPU performance, especially for TQC.
+
+These are limits of what I built and tried, not a claim about what's possible with a different algorithm, observation design, or training setup.
+
+## Experiment Log
+
+`EXPERIMENTS.md` contains the full run-by-run record, including:
+
+- Training configurations
+- Algorithm comparisons
+- Reward-shaping attempts
+- Failed experiments
+- Checkpoint locations
+- Phase 4 debugging
+- Generalization and robustness evaluations
+
+## Summary
+
+This project is one shared PyBullet and Gymnasium environment across six RL task phases.
+
+It has delta joint position control, obstacle-aware observations, staged reward shaping, dynamics randomization, evaluation-only perturbations, and a reproducible evaluation setup.
+
+Reaching and Pick and Place are solved with high success rates. Obstacle-Aware Manipulation is partially solved. Peg-in-Hole is still an open problem, though the insertion-only sub-task shows some progress.
+
+The main result is a working setup for studying manipulation tasks that get progressively harder, with clear metrics and a full record of what worked and what didn't.

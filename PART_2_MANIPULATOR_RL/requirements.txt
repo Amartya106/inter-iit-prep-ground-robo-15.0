@@ -3,10 +3,14 @@
 #   uv venv --python 3.10 .venv
 #   uv pip install -r requirements.txt
 #
-# Torch is pinned to the CPU build: the policy/critic MLPs are ~100k params
-# over a ~120-dim state vector, so a 4 GB laptop GPU gives no speedup and the
-# host<->device copy per batch is a net loss. PyBullet stepping on CPU is the
-# real throughput bottleneck.
+# Torch is pinned to the CPU build here, for a submission meant to run on
+# any machine. The project itself used both: phases 1-4's main checkpoints
+# trained on CPU, the later Phase 4 insertion investigation (R1-R6) trained
+# on GPU (a separate .venv_gpu_test with CUDA torch). Benchmarked directly
+# (runs/bench_cpu_clean.log vs runs/bench_gpu_clean.log): about 1450-1490
+# steps/s on CPU vs 1500-1550 on GPU. PyBullet physics stepping is the real
+# throughput bottleneck, not the ~100k-parameter policy/critic MLPs, so
+# which one you use barely changes the number.
 
 pybullet==3.2.6
 gymnasium==0.29.1

@@ -61,104 +61,59 @@ class PhaseConfig:
     insert_hold_steps: int = 10     # tolerance must hold this many consecutive steps
     collision_is_failure: bool = False   # Phase 3+: a colliding run cannot score full success
 
-    # Stage-1 environment fixes (E55's oracle-ceiling diagnosis: the frozen
-    # env's own privileged scripted expert scores 2% on Phase 4, so the RL
-    # policies plateauing at 1.5-2% were never the bottleneck -- 90% of the
-    # collapse is one step, an aligned peg failing to CROSS the rim into the
-    # bore: 26.5% of oracle episodes register peg-vs-ring contact, at a mean
-    # xy_err of 4.6cm, i.e. landing on the sharp rim, not the 1cm-tolerance
-    # opening). Both default to current (frozen) behaviour -- every existing
-    # config/run in this file is bit-for-bit unaffected; a NEW opt-in config
-    # sets these explicitly. See EXPERIMENTS.md's Stage-1 entries for the
-    # oracle numbers measured with each on.
-    hole_chamfer: bool = False   # add an angled lead-in ring above the bore
-                                 # mouth (see env._place_hole) -- converts
-                                 # "land within the 3mm-clearance opening" into
-                                 # "land within the chamfer's wider opening and
-                                 # slide in", the standard fix for this exact
-                                 # failure mode in real insertion fixtures.
+    # Both default to current (frozen) behaviour; every existing config/run
+    # is unaffected. See EXPERIMENTS.md's Stage-1 entries for measurements.
+    hole_chamfer: bool = False   # angled lead-in ring above the bore mouth
+                                 # (env._place_hole), widens the effective
+                                 # capture opening for insertion.
     grasp_max_force: Optional[float] = None   # finite max force on the grasp
-                                 # constraint (env._grasp_cid) instead of the
-                                 # default infinite/rigid JOINT_FIXED -- lets
-                                 # the peg deflect and self-centre against the
-                                 # chamfer (the sim analogue of an RCC wrist),
+                                 # constraint instead of a rigid JOINT_FIXED,
+                                 # lets the peg deflect and self-centre.
                                  # None = unchanged rigid grasp.
     hole_segments: int = 8   # number of flat box segments forming the bore
-                                 # ring (env._build_scene/_place_hole) -- the
-                                 # wall is a regular polygon, never a true
-                                 # circle (PyBullet has no boolean/CSG cutout),
-                                 # so this is how round the opening looks and
-                                 # feels. 8 = the octagon every existing
-                                 # config/run/checkpoint in this file was
-                                 # built and trained against, unaffected by
-                                 # this field existing. A higher count (e.g.
-                                 # 24-32) approximates a circle much more
-                                 # closely -- smaller facets, smaller gaps
-                                 # between them -- but is a real physics
-                                 # change (different contact geometry at the
-                                 # rim), so it needs its own retrain/re-eval
-                                 # before any number measured under it is
-                                 # comparable to the octagon's. Not yet tried.
-    # E79's grasp-admissibility band (peg_in_hole, non-align_only real
-    # grasps only -- see env._handle_grasp/_form_grasp). Defaults match the
-    # values the fix shipped with; every existing config is bit-for-bit
-    # unaffected. Widening axial_hi/lateral only makes MORE approach poses
-    # admissible (never re-opens the "flange too low, insert depth
-    # unreachable" failure _GRASP_OFFSET_Z exists to prevent, which only
-    # axial_lo protects against -- left alone here on purpose).
+                                 # ring (env._build_scene/_place_hole) -- a
+                                 # regular polygon, never a true circle
+                                 # (PyBullet has no boolean/CSG cutout). 8 =
+                                 # the octagon every existing config/run/
+                                 # checkpoint was trained against. A higher
+                                 # count approximates a circle more closely
+                                 # but is a real physics change, needs its
+                                 # own retrain before comparing results.
+    # Grasp-admissibility band (peg_in_hole, non-align_only real grasps
+    # only, see env._handle_grasp/_form_grasp). Widening axial_hi/lateral
+    # only makes more approach poses admissible.
     grasp_admit_axial_lo: float = 0.015
     grasp_admit_axial_hi: float = 0.055
     grasp_admit_lateral: float = 0.035
     joint_max_velocity: Optional[float] = None   # cap each arm joint's
                                  # POSITION_CONTROL maxVelocity (rad/s) --
-                                 # found via direct trace while diagnosing
-                                 # E55's stalled-descent episodes: the rigid
-                                 # motor (force=200 N·m, no velocity cap
-                                 # anywhere in this codebase) driving INTO an
-                                 # ungrasped peg builds up 6mm of penetration
-                                 # and 300N+ of contact force before the
-                                 # solver's correction impulse launches the
-                                 # 0.05kg peg away at ~0.8 m/s -- a classic
-                                 # stiff-contact numerical explosion, not a
-                                 # skill failure. None = unchanged (no cap,
-                                 # PyBullet's own ~100rad/s default).
+                                 # without a cap, the rigid motor driving
+                                 # into an ungrasped peg can build up enough
+                                 # contact force to launch it away. None =
+                                 # unchanged (no cap).
     fine_control_frac: Optional[float] = None   # scale DELTA_Q_SCALE by this
-                                 # factor whenever grasped + within
-                                 # _FINE_CONTROL_RADIUS of hole_xy (env.step)
-                                 # -- the actuator's per-step quantum (5.3cm
-                                 # EE motion at DELTA_Q_SCALE=0.05, E55's plan
-                                 # notes) is ~5x the 1cm success tolerance;
-                                 # this narrows it near the hole ("a robot
-                                 # slows down for a precision task") without
-                                 # touching normal-phase control resolution.
-                                 # Applies to EVERY controller (scripted
-                                 # expert included, via the environment's own
-                                 # actuator response -- not a change to any
-                                 # controller's decision logic). None =
+                                 # factor whenever grasped and within
+                                 # _FINE_CONTROL_RADIUS of hole_xy (env.step),
+                                 # narrowing per-step motion near the hole for
+                                 # a precision approach. Applies to every
+                                 # controller, not just the RL policy. None =
                                  # unchanged, constant DELTA_Q_SCALE always.
 
-    # Keypoint "docking" reward geometry (structural, not a live-tunable
-    # weight -- the weight itself, `keypoint_w`, lives on RewardComputer, see
-    # rewards.py, so it gets SuccessGatedAnneal curriculum compatibility for
-    # free). K evenly-spaced points on the peg's bottom rim are matched
-    # (best circular-fit rotation, yaw-invariant -- the peg is a rotationally
-    # symmetric cylinder, env.py:381, so a FIXED label match would penalize
-    # perfectly valid insertions at the "wrong" yaw) against K points on the
-    # bore's inner wall at the mouth, in _state_dict() (env.py). Default 4 =
-    # unchanged from every existing config's implicit behavior when
-    # keypoint_w stays 0.0 (the term is a no-op either way at w=0, this only
-    # controls the geometry IF the term is ever turned on).
+    # Keypoint "docking" reward geometry (the weight, keypoint_w, lives on
+    # RewardComputer in rewards.py). K evenly-spaced points on the peg's
+    # bottom rim are matched, by best circular-fit rotation, against K
+    # points on the bore's inner wall at the mouth. Default 4 is a no-op
+    # while keypoint_w stays 0.0.
     keypoint_n: int = 4
 
-    # training aid: fraction of TRAIN episodes that start with the peg already
-    # grasped (grasp-discovery curriculum). Never used for eval.
+    # fraction of TRAIN episodes that start with the peg already grasped
+    # (grasp-discovery curriculum). Never used for eval.
     grasp_curriculum: float = 0.0
 
-    # Task-decomposition variants (SeqPolicy-style: pick / align / insert as
-    # separate sub-policies rather than one monolithic policy -- see
-    # https://www.sciopen.com/article/10.26599/AIR.2024.9150043). Both are
-    # applied via ManipulaRLEnv(cfg_overrides=...), never set directly in
-    # PHASES below -- phase=4's own PhaseConfig stays the real, official task.
+    # Task-decomposition variants (pick / align / insert as separate
+    # sub-policies rather than one monolithic policy). Applied via
+    # ManipulaRLEnv(cfg_overrides=...), never set directly in PHASES below --
+    # phase=4's own PhaseConfig stays the official task.
     align_only: bool = False   # peg_in_hole: succeed once xy/tilt-aligned
                                 # above the hole mouth (grasped, held), no
                                 # depth requirement -- Task 1/"reach+align".
@@ -168,25 +123,14 @@ class PhaseConfig:
                                 # env._start_pre_inserted); only the final
                                 # push-through is left to learn -- Task 2/
                                 # "insert". Train-time start depth is
-                                # curriculum-controlled (see
-                                # set_insert_start_depth_frac); eval always
-                                # starts at the hardest setting (depth=0,
-                                # peg just touching the mouth).
-    descend_only: bool = False  # peg_in_hole: I further split Task 1 into
-                                # two sub-stages -- "1a" (align_
-                                # only, above) reaches ANY height in the
-                                # "airspace" column above the hole, xy/tilt-
-                                # aligned; "1b"/descend_only (this flag)
-                                # starts already grasped + xy-aligned at a
-                                # RANDOM height within that airspace (see
-                                # env._start_pre_airspace) and must move
-                                # smoothly straight down into the hole while
-                                # staying aligned -- reuses the full (non-
-                                # align_only) peg_in_hole success/potential
-                                # unchanged, since success here genuinely IS
-                                # depth+xy+tilt, just approached from a
-                                # randomized starting height instead of
-                                # always right at the mouth (insert_only).
+                                # curriculum-controlled; eval always starts
+                                # at the hardest setting (depth=0).
+    descend_only: bool = False  # peg_in_hole: Task 1b -- starts already
+                                # grasped and xy-aligned at a random height
+                                # above the hole (env._start_pre_airspace)
+                                # and must descend smoothly while staying
+                                # aligned. Reuses the full peg_in_hole
+                                # success/potential unchanged.
 
     # randomization
     randomize_layout: bool = True
